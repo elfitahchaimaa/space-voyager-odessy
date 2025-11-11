@@ -1,0 +1,830 @@
+// ==========================================
+// 1. GESTION DE L'AUTHENTIFICATION ET DES SESSIONS
+// ==========================================
+
+class AuthManager {
+    constructor() {
+        this.currentUser = this.loadSession();
+        this.updateUI();
+    }
+
+    login(email, password) {
+        // Simulation d'authentification
+        const user = {
+            id: Date.now(),
+            email: email,
+            name: email.split('@')[0],
+            loginTime: new Date().toISOString()
+        };
+        
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUser = user;
+        this.updateUI();
+        return user;
+    }
+
+    logout() {
+        sessionStorage.removeItem('currentUser');
+        this.currentUser = null;
+        this.updateUI();
+    }
+
+    loadSession() {
+        const userData = sessionStorage.getItem('currentUser');
+        return userData ? JSON.parse(userData) : null;
+    }
+
+    isLoggedIn() {
+        return this.currentUser !== null;
+    }
+
+    updateUI() {
+        const loginBtn = document.querySelector('a[href="#login"]');
+        if (loginBtn) {
+            if (this.isLoggedIn()) {
+                loginBtn.textContent = `${this.currentUser.name} | Logout`;
+                loginBtn.onclick = (e) => {
+                    e.preventDefault();
+                    this.logout();
+                    showNotification('Déconnexion réussie', 'success');
+                };
+            } else {
+                loginBtn.textContent = 'Login';
+                loginBtn.onclick = (e) => {
+                    e.preventDefault();
+                    showLoginModal();
+                };
+            }
+        }
+    }
+}
+
+const authManager = new AuthManager();
+
+// ==========================================
+// 2. SYSTÈME DE RÉSERVATION DYNAMIQUE
+// ==========================================
+
+class BookingSystem {
+    constructor() {
+        this.pricing = {
+            destinations: {
+                moon: { base: 5000, name: 'Moon' },
+                mars: { base: 15000, name: 'Mars' },
+                iss: { base: 3000, name: 'ISS' },
+                jupiter: { base: 50000, name: 'Jupiter' },
+                saturn: { base: 75000, name: 'Saturn' }
+            },
+            accommodations: {
+                standard: { multiplier: 1, name: 'Standard Cabin' },
+                luxury: { multiplier: 2.5, name: 'Luxury Suite' },
+                zerog: { multiplier: 3.5, name: 'Zero-G Pod' }
+            },
+            passengers: {
+                solo: 1,
+                couple: 2,
+                group: 4
+            }
+        };
+        
+        this.passengers = [this.createPassengerData()];
+        this.initializePricing();
+    }
+
+    createPassengerData() {
+        return {
+            id: Date.now() + Math.random(),
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            requirements: ''
+        };
+    }
+
+    calculatePrice() {
+        const destination = document.getElementById('destination').value;
+        const accommodation = document.getElementById('accommodation').value;
+        const passengerType = document.querySelector('input[name="passengers"]:checked').value;
+        
+        if (!destination || !accommodation) return 0;
+        
+        const basePrice = this.pricing.destinations[destination]?.base || 0;
+        const accommodationMultiplier = this.pricing.accommodations[accommodation]?.multiplier || 1;
+        const passengerCount = this.pricing.passengers[passengerType];
+        
+        return basePrice * accommodationMultiplier * passengerCount;
+    }
+
+    updatePriceDisplay() {
+        const price = this.calculatePrice();
+        let priceDisplay = document.getElementById('priceDisplay');
+        
+        if (!priceDisplay) {
+            priceDisplay = document.createElement('div');
+            priceDisplay.id = 'priceDisplay';
+            priceDisplay.className = 'price-display';
+            const firstSection = document.querySelector('.form-section');
+            firstSection.appendChild(priceDisplay);
+        }
+        
+        priceDisplay.innerHTML = `
+            <div class="price-card">
+                <span class="price-label">Prix Total Estimé:</span>
+                <span class="price-amount">$${price.toLocaleString()}</span>
+            </div>
+        `;
+    }
+
+    initializePricing() {
+        const priceInputs = ['destination', 'accommodation'];
+        priceInputs.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', () => this.updatePriceDisplay());
+            }
+        });
+
+        document.querySelectorAll('input[name="passengers"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.updatePriceDisplay();
+                this.updatePassengerFields();
+            });
+        });
+    }
+
+    updatePassengerFields() {
+        const passengerType = document.querySelector('input[name="passengers"]:checked').value;
+        const count = this.pricing.passengers[passengerType];
+        
+        while (this.passengers.length < count) {
+            this.passengers.push(this.createPassengerData());
+        }
+        
+        while (this.passengers.length > count) {
+            this.passengers.pop();
+        }
+        
+        this.renderPassengerForms();
+    }
+
+    renderPassengerForms() {
+        let container = document.getElementById('additionalPassengers');
+        
+        if (!container && this.passengers.length > 1) {
+            container = document.createElement('div');
+            container.id = 'additionalPassengers';
+            const personalInfo = document.querySelectorAll('.form-section')[1];
+            personalInfo.appendChild(container);
+        }
+        
+        if (container) {
+            container.innerHTML = '';
+            
+            for (let i = 1; i < this.passengers.length; i++) {
+                const passengerForm = this.createPassengerForm(i);
+                container.appendChild(passengerForm);
+            }
+        }
+    }
+
+    createPassengerForm(index) {
+        const div = document.createElement('div');
+        div.className = 'passenger-section';
+        div.innerHTML = `
+            <h3 class="passenger-title">Passager ${index + 1}</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Prénom</label>
+                    <input type="text" id="firstName${index}" placeholder="Prénom du passager ${index + 1}">
+                    <span class="error-message" id="firstName${index}Error"></span>
+                </div>
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" id="lastName${index}" placeholder="Nom du passager ${index + 1}">
+                    <span class="error-message" id="lastName${index}Error"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email${index}" placeholder="Email du passager ${index + 1}">
+                    <span class="error-message" id="email${index}Error"></span>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" id="phone${index}" placeholder="Téléphone du passager ${index + 1}">
+                    <span class="error-message" id="phone${index}Error"></span>
+                </div>
+            </div>
+        `;
+        return div;
+    }
+}
+
+const bookingSystem = new BookingSystem();
+
+// ==========================================
+// 3. GESTION DES DONNÉES ET OPÉRATIONS CRUD
+// ==========================================
+
+class BookingManager {
+    constructor() {
+        this.storageKey = 'spaceBookings';
+        this.bookings = this.loadBookings();
+    }
+
+    // CREATE
+    createBooking(bookingData) {
+        const booking = {
+            id: this.generateUniqueId(),
+            userId: authManager.currentUser?.id || 'guest',
+            ...bookingData,
+            createdAt: new Date().toISOString(),
+            status: 'confirmed'
+        };
+        
+        this.bookings.push(booking);
+        this.saveBookings();
+        return booking;
+    }
+
+    // READ
+    getBooking(id) {
+        return this.bookings.find(b => b.id === id);
+    }
+
+    getAllBookings() {
+        return this.bookings;
+    }
+
+    getUserBookings(userId) {
+        return this.bookings.filter(b => b.userId === userId);
+    }
+
+    // UPDATE
+    updateBooking(id, updatedData) {
+        const index = this.bookings.findIndex(b => b.id === id);
+        if (index !== -1) {
+            this.bookings[index] = {
+                ...this.bookings[index],
+                ...updatedData,
+                updatedAt: new Date().toISOString()
+            };
+            this.saveBookings();
+            return this.bookings[index];
+        }
+        return null;
+    }
+
+    // DELETE
+    deleteBooking(id) {
+        const index = this.bookings.findIndex(b => b.id === id);
+        if (index !== -1) {
+            const deleted = this.bookings.splice(index, 1)[0];
+            this.saveBookings();
+            return deleted;
+        }
+        return null;
+    }
+
+    // PERSISTENCE
+    saveBookings() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.bookings));
+    }
+
+    loadBookings() {
+        const data = localStorage.getItem(this.storageKey);
+        return data ? JSON.parse(data) : [];
+    }
+
+    generateUniqueId() {
+        return `BK${Date.now()}${Math.random().toString(36).substr(2, 9)}`.toUpperCase();
+    }
+
+    // SEARCH & FILTER
+    searchBookings(query) {
+        query = query.toLowerCase();
+        return this.bookings.filter(b => 
+            b.id.toLowerCase().includes(query) ||
+            b.firstName.toLowerCase().includes(query) ||
+            b.lastName.toLowerCase().includes(query) ||
+            b.email.toLowerCase().includes(query) ||
+            b.destination.toLowerCase().includes(query)
+        );
+    }
+
+    filterByDate(startDate, endDate) {
+        return this.bookings.filter(b => {
+            const bookingDate = new Date(b.departureDate);
+            return bookingDate >= startDate && bookingDate <= endDate;
+        });
+    }
+
+    filterByStatus(status) {
+        return this.bookings.filter(b => b.status === status);
+    }
+}
+
+const bookingManager = new BookingManager();
+
+// ==========================================
+// 4. VALIDATION DES FORMULAIRES
+// ==========================================
+
+class FormValidator {
+    constructor() {
+        this.validators = {
+            required: (value) => value.trim() !== '',
+            email: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+            phone: (value) => /^[\d\s\-\+\(\)]{10,}$/.test(value) && value.replace(/\D/g, '').length >= 10,
+            name: (value) => /^[a-zA-ZÀ-ÿ\s'-]{2,}$/.test(value),
+            minLength: (value, length) => value.length >= length,
+            futureDate: (value) => new Date(value) > new Date(),
+            alphanumeric: (value) => /^[a-zA-Z0-9\s]+$/.test(value)
+        };
+    }
+
+    validate(field, rules) {
+        const value = field.value.trim();
+        const fieldId = field.id;
+
+        for (const rule of rules) {
+            const [validatorName, param, message] = rule;
+            const validator = this.validators[validatorName];
+            
+            if (!validator) continue;
+            
+            const isValid = param !== undefined ? validator(value, param) : validator(value);
+            
+            if (!isValid) {
+                this.showError(fieldId, message);
+                return false;
+            }
+        }
+        
+        this.clearError(fieldId);
+        return true;
+    }
+
+    showError(fieldId, message) {
+        const errorElement = document.getElementById(`${fieldId}Error`);
+        const inputElement = document.getElementById(fieldId);
+        
+        if (errorElement) errorElement.textContent = message;
+        if (inputElement) inputElement.classList.add('error');
+    }
+
+    clearError(fieldId) {
+        const errorElement = document.getElementById(`${fieldId}Error`);
+        const inputElement = document.getElementById(fieldId);
+        
+        if (errorElement) errorElement.textContent = '';
+        if (inputElement) inputElement.classList.remove('error');
+    }
+
+    validateForm(formId) {
+        const form = document.getElementById(formId);
+        let isValid = true;
+
+        const validationRules = {
+            destination: [
+                ['required', undefined, 'Veuillez sélectionner une destination']
+            ],
+            departureDate: [
+                ['required', undefined, 'Veuillez sélectionner une date de départ'],
+                ['futureDate', undefined, 'La date doit être dans le futur']
+            ],
+            firstName: [
+                ['required', undefined, 'Le prénom est requis'],
+                ['name', undefined, 'Prénom invalide (lettres uniquement)'],
+                ['minLength', 2, 'Le prénom doit contenir au moins 2 caractères']
+            ],
+            lastName: [
+                ['required', undefined, 'Le nom est requis'],
+                ['name', undefined, 'Nom invalide (lettres uniquement)'],
+                ['minLength', 2, 'Le nom doit contenir au moins 2 caractères']
+            ],
+            email: [
+                ['required', undefined, 'L\'email est requis'],
+                ['email', undefined, 'Format d\'email invalide']
+            ],
+            phone: [
+                ['required', undefined, 'Le téléphone est requis'],
+                ['phone', undefined, 'Numéro de téléphone invalide (min. 10 chiffres)']
+            ]
+        };
+
+        for (const [fieldId, rules] of Object.entries(validationRules)) {
+            const field = document.getElementById(fieldId);
+            if (field && !this.validate(field, rules)) {
+                isValid = false;
+            }
+        }
+
+        // Valider les passagers additionnels
+        for (let i = 1; i < bookingSystem.passengers.length; i++) {
+            ['firstName', 'lastName', 'email', 'phone'].forEach(fieldName => {
+                const field = document.getElementById(`${fieldName}${i}`);
+                if (field) {
+                    const rules = validationRules[fieldName];
+                    if (!this.validate(field, rules)) {
+                        isValid = false;
+                    }
+                }
+            });
+        }
+
+        return isValid;
+    }
+}
+
+const formValidator = new FormValidator();
+
+// ==========================================
+// 5. INTERFACE DE GESTION DES RÉSERVATIONS
+// ==========================================
+
+class BookingDashboard {
+    constructor() {
+        this.filters = {
+            search: '',
+            status: 'all',
+            dateFrom: null,
+            dateTo: null
+        };
+    }
+
+    render() {
+        const bookings = this.getFilteredBookings();
+        
+        const dashboardHTML = `
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <h2>Tableau de Bord des Réservations</h2>
+                    <button onclick="bookingDashboard.closeDashboard()" class="close-btn">✕</button>
+                </div>
+                
+                <div class="dashboard-filters">
+                    <input type="text" id="searchInput" placeholder="Rechercher par ID, nom, email..." 
+                           onkeyup="bookingDashboard.applyFilters()">
+                    <select id="statusFilter" onchange="bookingDashboard.applyFilters()">
+                        <option value="all">Tous les statuts</option>
+                        <option value="confirmed">Confirmé</option>
+                        <option value="cancelled">Annulé</option>
+                        <option value="completed">Complété</option>
+                    </select>
+                    <input type="date" id="dateFrom" onchange="bookingDashboard.applyFilters()">
+                    <input type="date" id="dateTo" onchange="bookingDashboard.applyFilters()">
+                </div>
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <span class="stat-value">${bookings.length}</span>
+                        <span class="stat-label">Total Réservations</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${bookings.filter(b => b.status === 'confirmed').length}</span>
+                        <span class="stat-label">Confirmées</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">$${this.calculateTotalRevenue(bookings).toLocaleString()}</span>
+                        <span class="stat-label">Revenu Total</span>
+                    </div>
+                </div>
+                
+                <div class="bookings-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Passager</th>
+                                <th>Destination</th>
+                                <th>Date</th>
+                                <th>Prix</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${bookings.map(b => this.renderBookingRow(b)).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+        
+        return dashboardHTML;
+    }
+
+    renderBookingRow(booking) {
+        return `
+            <tr>
+                <td>${booking.id}</td>
+                <td>${booking.firstName} ${booking.lastName}</td>
+                <td>${booking.destination}</td>
+                <td>${new Date(booking.departureDate).toLocaleDateString()}</td>
+                <td>$${(booking.price || 0).toLocaleString()}</td>
+                <td><span class="status-badge status-${booking.status}">${booking.status}</span></td>
+                <td class="actions-cell">
+                    <button onclick="bookingDashboard.viewBooking('${booking.id}')" class="btn-icon" title="Voir">👁️</button>
+                    <button onclick="bookingDashboard.editBooking('${booking.id}')" class="btn-icon" title="Modifier">✏️</button>
+                    <button onclick="ticketGenerator.generateTicket('${booking.id}')" class="btn-icon" title="Imprimer">🖨️</button>
+                    <button onclick="bookingDashboard.deleteBooking('${booking.id}')" class="btn-icon" title="Supprimer">🗑️</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    showDashboard() {
+        const modal = document.createElement('div');
+        modal.id = 'dashboardModal';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = this.render();
+        document.body.appendChild(modal);
+    }
+
+    closeDashboard() {
+        const modal = document.getElementById('dashboardModal');
+        if (modal) modal.remove();
+    }
+
+    applyFilters() {
+        this.filters.search = document.getElementById('searchInput')?.value || '';
+        this.filters.status = document.getElementById('statusFilter')?.value || 'all';
+        this.filters.dateFrom = document.getElementById('dateFrom')?.value || null;
+        this.filters.dateTo = document.getElementById('dateTo')?.value || null;
+        
+        this.closeDashboard();
+        this.showDashboard();
+    }
+
+    getFilteredBookings() {
+        let bookings = bookingManager.getAllBookings();
+        
+        if (this.filters.search) {
+            bookings = bookingManager.searchBookings(this.filters.search);
+        }
+        
+        if (this.filters.status !== 'all') {
+            bookings = bookings.filter(b => b.status === this.filters.status);
+        }
+        
+        if (this.filters.dateFrom && this.filters.dateTo) {
+            bookings = bookings.filter(b => {
+                const date = new Date(b.departureDate);
+                return date >= new Date(this.filters.dateFrom) && date <= new Date(this.filters.dateTo);
+            });
+        }
+        
+        return bookings;
+    }
+
+    calculateTotalRevenue(bookings) {
+        return bookings.reduce((sum, b) => sum + (b.price || 0), 0);
+    }
+
+    viewBooking(id) {
+        const booking = bookingManager.getBooking(id);
+        if (booking) {
+            alert(JSON.stringify(booking, null, 2));
+        }
+    }
+
+    editBooking(id) {
+        const booking = bookingManager.getBooking(id);
+        if (booking) {
+            // Remplir le formulaire avec les données
+            document.getElementById('destination').value = booking.destination;
+            document.getElementById('departureDate').value = booking.departureDate;
+            document.getElementById('firstName').value = booking.firstName;
+            document.getElementById('lastName').value = booking.lastName;
+            document.getElementById('email').value = booking.email;
+            document.getElementById('phone').value = booking.phone;
+            document.getElementById('requirements').value = booking.requirements || '';
+            
+            this.closeDashboard();
+            showNotification('Formulaire rempli pour modification', 'info');
+        }
+    }
+
+    deleteBooking(id) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette réservation ?')) {
+            bookingManager.deleteBooking(id);
+            showNotification('Réservation supprimée avec succès', 'success');
+            this.closeDashboard();
+            this.showDashboard();
+        }
+    }
+}
+
+const bookingDashboard = new BookingDashboard();
+
+// ==========================================
+// 6. GÉNÉRATION ET IMPRESSION DE BILLETS
+// ==========================================
+
+class TicketGenerator {
+    generateTicket(bookingId) {
+        const booking = bookingManager.getBooking(bookingId);
+        if (!booking) return;
+
+        const ticketHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Billet SpaceVoyager - ${booking.id}</title>
+                <style>
+                    @media print {
+                        body { margin: 0; padding: 20mm; }
+                        .no-print { display: none; }
+                    }
+                    body {
+                        font-family: Arial, sans-serif;
+                        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+                        color: #ffffff;
+                        padding: 40px;
+                    }
+                    .ticket {
+                        max-width: 800px;
+                        margin: 0 auto;
+                        background: rgba(26, 31, 58, 0.9);
+                        border: 2px solid #4A9EFF;
+                        border-radius: 15px;
+                        padding: 40px;
+                        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+                    }
+                    .ticket-header {
+                        text-align: center;
+                        border-bottom: 2px solid #4A9EFF;
+                        padding-bottom: 20px;
+                        margin-bottom: 30px;
+                    }
+                    .ticket-header h1 {
+                        color: #4A9EFF;
+                        margin: 0 0 10px 0;
+                    }
+                    .ticket-id {
+                        font-size: 24px;
+                        font-weight: bold;
+                        color: #8B5CF6;
+                        letter-spacing: 2px;
+                    }
+                    .ticket-section {
+                        margin: 20px 0;
+                    }
+                    .ticket-section h3 {
+                        color: #4A9EFF;
+                        margin-bottom: 15px;
+                    }
+                    .ticket-row {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 10px 0;
+                        border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+                    }
+                    .ticket-label {
+                        color: #a8b2d1;
+                        font-weight: 600;
+                    }
+                    .ticket-value {
+                        color: #ffffff;
+                        font-weight: bold;
+                    }
+                    .qr-code {
+                        text-align: center;
+                        margin: 30px 0;
+                        padding: 20px;
+                        background: white;
+                        border-radius: 10px;
+                    }
+                    .ticket-footer {
+                        text-align: center;
+                        margin-top: 30px;
+                        padding-top: 20px;
+                        border-top: 2px solid #4A9EFF;
+                        color: #a8b2d1;
+                    }
+                    .print-btn {
+                        background: linear-gradient(90deg, #4A9EFF, #8B5CF6);
+                        color: white;
+                        border: none;
+                        padding: 15px 30px;
+                        border-radius: 8px;
+                        font-size: 16px;
+                        cursor: pointer;
+                        margin: 20px auto;
+                        display: block;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="ticket">
+                    <div class="ticket-header">
+                        <h1>🚀 SPACEVOYAGER</h1>
+                        <p>Billet de Voyage Spatial</p>
+                        <div class="ticket-id">${booking.id}</div>
+                    </div>
+
+                    <div class="ticket-section">
+                        <h3>Informations Passager</h3>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Nom Complet:</span>
+                            <span class="ticket-value">${booking.firstName} ${booking.lastName}</span>
+                        </div>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Email:</span>
+                            <span class="ticket-value">${booking.email}</span>
+                        </div>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Téléphone:</span>
+                            <span class="ticket-value">${booking.phone}</span>
+                        </div>
+                    </div>
+
+                    <div class="ticket-section">
+                        <h3>Détails du Voyage</h3>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Destination:</span>
+                            <span class="ticket-value">${booking.destination.toUpperCase()}</span>
+                        </div>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Date de Départ:</span>
+                            <span class="ticket-value">${new Date(booking.departureDate).toLocaleDateString('fr-FR', { 
+                                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+                            })}</span>
+                        </div>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Hébergement:</span>
+                            <span class="ticket-value">${booking.accommodation}</span>
+                        </div>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Nombre de Passagers:</span>
+                            <span class="ticket-value">${booking.passengerType}</span>
+                        </div>
+                    </div>
+
+                    <div class="ticket-section">
+                        <div class="ticket-row">
+                            <span class="ticket-label">Prix Total:</span>
+                            <span class="ticket-value" style="font-size: 24px; color: #4A9EFF;">$${(booking.price || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Statut:</span>
+                            <span class="ticket-value" style="color: #10b981;">${booking.status.toUpperCase()}</span>
+                        </div>
+                    </div>
+
+                    <div class="qr-code">
+                        <svg width="150" height="150" viewBox="0 0 150 150">
+                            <rect width="150" height="150" fill="white"/>
+                            <rect x="10" y="10" width="30" height="30" fill="black"/>
+                            <rect x="50" y="10" width="10" height="10" fill="black"/>
+                            <rect x="70" y="10" width="20" height="20" fill="black"/>
+                            <rect x="110" y="10" width="30" height="30" fill="black"/>
+                            <text x="75" y="80" text-anchor="middle" fill="black" font-size="12">${booking.id}</text>
+                        </svg>
+                    </div>
+
+                    <div class="ticket-footer">
+                        <p><strong>SpaceVoyager Inc.</strong></p>
+                        <p>Veuillez présenter ce billet 2 heures avant le départ</p>
+                        <p>Pour toute question: support@spacevoyager.com</p>
+                        <p style="font-size: 12px; margin-top: 10px;">
+                            Réservation créée le ${new Date(booking.createdAt).toLocaleDateString('fr-FR')}
+                        </p>
+                    </div>
+
+                    <button class="print-btn no-print" onclick="window.print()">🖨️ Imprimer le Billet</button>
+                </div>
+            </body>
+            </html>
+        `;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(ticketHTML);
+        printWindow.document.close();
+    }
+}
+
+const ticketGenerator = new TicketGenerator();
+
+// ==========================================
+// 7. SYSTÈME DE NOTIFICATIONS
+// ==========================================
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.classList.add('show'), 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+

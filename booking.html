@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceVoyager - Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="16" r="14" stroke="#4A9EFF" stroke-width="2"/>
+                        <path d="M16 8L20 16L16 24L12 16L16 8Z" fill="#4A9EFF"/>
+                    </svg>
+                </div>
+                <span class="logo-text">SpaceVoyager</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#destinations">Destinations</a></li>
+                <li><a href="#booking" class="active">Booking</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#login">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="stars"></div>
+
+    <main class="container">
+        <h1 class="main-title">Book Your Space Journey</h1>
+        <p class="subtitle">Begin your adventure to the stars. Fill out the form below to reserve your spot on our next space voyage.</p>
+
+        <form id="bookingForm" class="booking-form">
+            <section class="form-section">
+                <h2 class="section-title">Journey Details</h2>
+
+                <div class="form-group">
+                    <label for="destination">Destination</label>
+                    <select id="destination" name="destination" required>
+                        <option value="">Select your destination</option>
+                        <option value="moon">Moon</option>
+                        <option value="mars">Mars</option>
+                        <option value="iss">International Space Station</option>
+                        <option value="jupiter">Jupiter</option>
+                        <option value="saturn">Saturn</option>
+                    </select>
+                    <span class="error-message" id="destinationError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="departureDate">Departure Date</label>
+                    <input type="date" id="departureDate" name="departureDate" placeholder="mm/dd/yyyy" required>
+                    <span class="error-message" id="departureDateError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Number of Passengers</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="passengers" value="solo" checked>
+                            <span>Solo Traveler</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="passengers" value="couple">
+                            <span>Couple (2)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="passengers" value="group">
+                            <span>Group (3-6)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Accommodation Type</label>
+                    <div class="accommodation-options">
+                        <div class="accommodation-card" data-type="standard">
+                            <h3>Standard Cabin</h3>
+                            <p>Comfortable private quarters with basic amenities</p>
+                        </div>
+                        <div class="accommodation-card" data-type="luxury">
+                            <h3>Luxury Suite</h3>
+                            <p>Spacious suite with premium amenities and viewports</p>
+                        </div>
+                        <div class="accommodation-card" data-type="zerog">
+                            <h3>Zero-G Pod</h3>
+                            <p>Advanced accommodation with zero-gravity experience</p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="accommodation" name="accommodation" value="standard">
+                    <span class="error-message" id="accommodationError"></span>
+                </div>
+            </section>
+
+            <section class="form-section">
+                <h2 class="section-title">Personal Information</h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                        <span class="error-message" id="firstNameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
+                        <span class="error-message" id="lastNameError"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <span class="error-message" id="emailError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                        <span class="error-message" id="phoneError"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="requirements">Special Requirements</label>
+                    <textarea id="requirements" name="requirements" rows="5" placeholder="Any special requirements or notes..."></textarea>
+                </div>
+            </section>
+
+            <button type="button" class="btn-secondary" id="addPassengerBtn">Add Passenger</button>
+
+            <button type="submit" class="btn-primary">Confirm Booking</button>
+
+            <p class="terms">
+                By confirming, you agree to our 
+                <a href="#terms">Terms of Service</a> and 
+                <a href="#agreement">Space Travel Agreement</a>.
+            </p>
+        </form>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
