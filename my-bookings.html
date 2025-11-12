@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings - SpaceVoyager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="🚀" />
+  <style>
+    body {
+      background: radial-gradient(ellipse at top, #0b0f29, #020409);
+      background-attachment: fixed;
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .nav-link.active {
+      color: #60a5fa;
+    }
+
+    /* Modal Background */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal-content {
+      background: #111827;
+      color: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="bg-gray-900/80 backdrop-blur border-b border-gray-800 sticky top-0 z-40">
+    <nav class="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+      <!-- Left: Logo -->
+      <a href="index.html" class="flex items-center space-x-2">
+        <span class="text-2xl">🚀</span>
+        <span class="text-xl font-bold text-white">SpaceVoyager</span>
+      </a>
+
+      <!-- Center: Links -->
+      <div class="hidden md:flex space-x-6 text-gray-300">
+        <a href="index.html" class="hover:text-white transition">Home</a>
+        <a href="destinations.html" class="hover:text-white transition">Destinations</a>
+        <a href="booking.html" class="hover:text-white transition">Book</a>
+        <a href="my-bookings.html" class="text-blue-400 font-semibold">My Bookings</a>
+      </div>
+
+      <!-- Right: Auth -->
+      <div id="authSection" class="text-gray-300 text-sm"></div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="min-h-screen py-12 px-4 md:px-8">
+    <div class="max-w-6xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-2 bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+        My Bookings
+      </h1>
+      <p class="text-gray-400 mb-10 text-lg">Manage your interstellar adventures 🌠</p>
+
+      <!-- Bookings Section -->
+      <section id="bookingsSection">
+        <!-- No Bookings -->
+        <div id="noBookings" class="hidden">
+          <div class="bg-gray-800/60 border border-gray-700 rounded-2xl py-16 px-6 max-w-2xl mx-auto shadow-lg">
+            <div class="text-6xl mb-4">🛸</div>
+            <h2 class="text-2xl font-semibold mb-2">No Bookings Yet</h2>
+            <p class="text-gray-400 mb-6">You haven’t made any bookings yet. Start your journey to the stars!</p>
+            <a href="booking.html"
+              class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition">
+              Book Your First Journey
+            </a>
+          </div>
+        </div>
+
+        <!-- Bookings List -->
+        <div id="bookingsList" class="grid md:grid-cols-2 gap-6 mt-8"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Cancel Booking Modal -->
+  <div id="cancelModal" class="modal">
+    <div class="modal-content">
+      <h2 class="text-2xl font-bold mb-4 text-red-400">Cancel Booking</h2>
+      <p class="text-gray-300 mb-4">Are you sure you want to cancel this booking? This action cannot be undone.</p>
+
+      <div id="cancelBookingDetails" class="text-left text-gray-300 mb-6 space-y-1"></div>
+
+      <div class="flex justify-center space-x-3">
+        <button id="cancelNoBtn"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-5 py-2 rounded-md transition">Keep Booking</button>
+        <button id="cancelYesBtn"
+          class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-md transition">Yes, Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 border-t border-gray-800 mt-16">
+    <div class="max-w-6xl mx-auto px-6 py-12 grid md:grid-cols-3 gap-10 text-gray-300">
+      <div>
+        <h4 class="text-lg font-semibold mb-2 text-white">SpaceVoyager</h4>
+        <p>Your gateway to the stars ✨</p>
+      </div>
+
+      <div>
+        <h4 class="text-lg font-semibold mb-2 text-white">Quick Links</h4>
+        <ul class="space-y-1">
+          <li><a href="destinations.html" class="hover:text-white transition">Destinations</a></li>
+          <li><a href="booking.html" class="hover:text-white transition">Book Now</a></li>
+          <li><a href="my-bookings.html" class="hover:text-white transition">My Bookings</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-lg font-semibold mb-2 text-white">Support</h4>
+        <ul class="space-y-1">
+          <li><a href="#" class="hover:text-white transition">Help Center</a></li>
+          <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+          <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="text-center py-4 border-t border-gray-800 text-gray-500 text-sm">
+      &copy; 2025 SpaceVoyager. All rights reserved.
+    </div>
+  </footer>
+
+    <script >// ======================
+// my-bookings.js
+// ======================
+
+document.addEventListener("DOMContentLoaded", () => {
+  const bookingsList = document.getElementById("bookingsList");
+  const noBookingsSection = document.getElementById("noBookings");
+  const cancelModal = document.getElementById("cancelModal");
+  const cancelNoBtn = document.getElementById("cancelNoBtn");
+  const cancelYesBtn = document.getElementById("cancelYesBtn");
+  const cancelBookingDetails = document.getElementById("cancelBookingDetails");
+
+  let bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+  let bookingToCancel = null;
+
+  // ============ Display Bookings ============
+  function displayBookings() {
+    bookingsList.innerHTML = "";
+
+    if (bookings.length === 0) {
+      noBookingsSection.style.display = "block";
+      bookingsList.style.display = "none";
+      return;
+    }
+
+    noBookingsSection.style.display = "none";
+    bookingsList.style.display = "grid";
+    bookingsList.className =
+      "grid md:grid-cols-2 gap-6 mt-8"; // Tailwind layout
+
+    bookings.forEach((booking) => {
+      const card = document.createElement("div");
+      card.className =
+        "bg-gray-800/70 text-white p-6 rounded-xl shadow-lg border border-gray-700 flex flex-col justify-between transition-transform hover:scale-[1.02]";
+
+      card.innerHTML = `
+        <div>
+          <h2 class="text-xl font-semibold mb-2">${booking.destinationName}</h2>
+          <p class="text-sm text-gray-300 mb-1"><strong>Date:</strong> ${booking.date}</p>
+          <p class="text-sm text-gray-300 mb-1"><strong>Travelers:</strong> ${booking.travelers}</p>
+          <p class="text-sm text-gray-300 mb-3"><strong>Total:</strong> $${booking.totalPrice.toLocaleString()}</p>
+        </div>
+
+        <div class="flex justify-between mt-4 space-x-2">
+          <button class="edit-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm transition-all" data-id="${booking.id}">
+            ✏️ Edit
+          </button>
+          <button class="ticket-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-sm transition-all" data-id="${booking.id}">
+            🎫 View Ticket
+          </button>
+          <button class="cancel-btn bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md text-sm transition-all" data-id="${booking.id}">
+            ❌ Cancel
+          </button>
+        </div>
+      `;
+
+      bookingsList.appendChild(card);
+    });
+
+    // Add event listeners
+    document.querySelectorAll(".edit-btn").forEach((btn) =>
+      btn.addEventListener("click", handleEditBooking)
+    );
+
+    document.querySelectorAll(".cancel-btn").forEach((btn) =>
+      btn.addEventListener("click", openCancelModal)
+    );
+
+    document.querySelectorAll(".ticket-btn").forEach((btn) =>
+      btn.addEventListener("click", viewTicket)
+    );
+  }
+
+  // ============ Edit Booking ============
+  function handleEditBooking(e) {
+    const bookingId = e.target.dataset.id;
+    const booking = bookings.find((b) => b.id === bookingId);
+
+    if (!booking) return;
+
+    // Save current booking to sessionStorage for editing
+    sessionStorage.setItem("editBooking", JSON.stringify(booking));
+
+    // Redirect to booking page
+    window.location.href = "booking.html?edit=true";
+  }
+
+  // ============ Cancel Booking ============
+  function openCancelModal(e) {
+    const bookingId = e.target.dataset.id;
+    bookingToCancel = bookings.find((b) => b.id === bookingId);
+
+    if (!bookingToCancel) return;
+
+    cancelBookingDetails.innerHTML = `
+      <p><strong>Destination:</strong> ${bookingToCancel.destinationName}</p>
+      <p><strong>Date:</strong> ${bookingToCancel.date}</p>
+      <p><strong>Total:</strong> $${bookingToCancel.totalPrice.toLocaleString()}</p>
+    `;
+
+    cancelModal.style.display = "flex";
+  }
+
+  cancelNoBtn.addEventListener("click", () => {
+    cancelModal.style.display = "none";
+    bookingToCancel = null;
+  });
+
+  cancelYesBtn.addEventListener("click", () => {
+    if (bookingToCancel) {
+      bookings = bookings.filter((b) => b.id !== bookingToCancel.id);
+      localStorage.setItem("bookings", JSON.stringify(bookings));
+      displayBookings();
+    }
+
+    cancelModal.style.display = "none";
+    bookingToCancel = null;
+  });
+
+  // ============ View Ticket ============
+  function viewTicket(e) {
+    const bookingId = e.target.dataset.id;
+    const booking = bookings.find((b) => b.id === bookingId);
+
+    if (!booking) return;
+
+    sessionStorage.setItem("ticketData", JSON.stringify(booking));
+    window.location.href = "ticket.html";
+  }
+
+  // ============ Initial Load ============
+  displayBookings();
+});
+</script>
+   
+</body>
+</html>

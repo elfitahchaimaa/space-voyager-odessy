@@ -647,6 +647,13 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "index.html";
     });
 });
+const editBooking = JSON.parse(sessionStorage.getItem("editBooking"));
+if (editBooking) {
+  // Pré-remplir le formulaire avec les données
+  fillForm(editBooking);
+  sessionStorage.removeItem("editBooking");
+}
+
 
     </script>
 </body>

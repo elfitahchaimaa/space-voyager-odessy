@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Space Ticket - SpaceVoyager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      .no-print { display: none; }
+      body { background: white; color: black; }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-6">
+  <div id="ticketContainer" class="bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-lg text-center">
+    <h1 class="text-3xl font-bold mb-4">🎫 Space Travel Ticket</h1>
+    <div id="ticketDetails" class="text-gray-200 text-left mb-6">
+      <!-- Filled by JS -->
+    </div>
+    <button onclick="window.print()" class="no-print bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">🖨️ Print Ticket</button>
+    <a href="my-bookings.html" class="no-print inline-block mt-4 text-gray-400 hover:text-gray-200">← Back to My Bookings</a>
+  </div>
+
+  <script>
+    const ticket = JSON.parse(sessionStorage.getItem("ticketData"));
+    if (ticket) {
+      document.getElementById("ticketDetails").innerHTML = `
+        <p><strong>Destination:</strong> ${ticket.destinationName}</p>
+        <p><strong>Date:</strong> ${ticket.date}</p>
+        <p><strong>Travelers:</strong> ${ticket.travelers}</p>
+        <p><strong>Total Paid:</strong> $${ticket.totalPrice.toLocaleString()}</p>
+        <p><strong>Booking ID:</strong> ${ticket.id}</p>
+      `;
+    } else {
+      document.getElementById("ticketDetails").innerHTML = "<p>No ticket data found.</p>";
+    }
+  </script>
+</body>
+</html>
