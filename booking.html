@@ -1,148 +1,617 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpaceVoyager - Booking</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Book Your Space Journey - SpaceVoyager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Arrière-plan spatial avec étoiles */
+        body {
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animation des étoiles */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Générer des étoiles aléatoires */
+        .star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+        .star:nth-child(2) { top: 20%; left: 80%; animation-delay: 0.5s; }
+        .star:nth-child(3) { top: 30%; left: 40%; animation-delay: 1s; }
+        .star:nth-child(4) { top: 40%; left: 60%; animation-delay: 1.5s; }
+        .star:nth-child(5) { top: 50%; left: 10%; animation-delay: 2s; }
+        .star:nth-child(6) { top: 60%; left: 90%; animation-delay: 2.5s; }
+        .star:nth-child(7) { top: 70%; left: 30%; animation-delay: 0.8s; }
+        .star:nth-child(8) { top: 80%; left: 70%; animation-delay: 1.3s; }
+        .star:nth-child(9) { top: 15%; left: 50%; animation-delay: 1.8s; }
+        .star:nth-child(10) { top: 85%; left: 15%; animation-delay: 0.3s; }
+        .star:nth-child(11) { top: 25%; left: 75%; animation-delay: 2.2s; }
+        .star:nth-child(12) { top: 45%; left: 25%; animation-delay: 0.7s; }
+        .star:nth-child(13) { top: 65%; left: 85%; animation-delay: 1.2s; }
+        .star:nth-child(14) { top: 5%; left: 45%; animation-delay: 1.7s; }
+        .star:nth-child(15) { top: 75%; left: 55%; animation-delay: 0.2s; }
+        .star:nth-child(16) { top: 35%; left: 65%; animation-delay: 2.7s; }
+        .star:nth-child(17) { top: 55%; left: 35%; animation-delay: 1.4s; }
+        .star:nth-child(18) { top: 90%; left: 50%; animation-delay: 0.9s; }
+        .star:nth-child(19) { top: 12%; left: 88%; animation-delay: 2.4s; }
+        .star:nth-child(20) { top: 48%; left: 12%; animation-delay: 0.4s; }
+
+        /* Style pour les cartes d'accommodation */
+        .accommodation-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .accommodation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .accommodation-card.selected {
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .accommodation-card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Gradient pour le bouton */
+        .gradient-button {
+            background: linear-gradient(90deg, #00d4ff 0%, #9333ea 100%);
+            transition: all 0.3s ease;
+        }
+
+        .gradient-button:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 40px rgba(147, 51, 234, 0.4);
+        }
+
+        /* Style pour les inputs */
+        input, select, textarea {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: #00ffff;
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Radio buttons personnalisés */
+        input[type="radio"]:checked + label {
+            color: #00ffff;
+        }
+    </style>
 </head>
-<body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <div class="logo-icon">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                        <circle cx="16" cy="16" r="14" stroke="#4A9EFF" stroke-width="2"/>
-                        <path d="M16 8L20 16L16 24L12 16L16 8Z" fill="#4A9EFF"/>
+<body class="text-white">
+    <!-- Étoiles animées -->
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
                     </svg>
                 </div>
-                <span class="logo-text">SpaceVoyager</span>
+                <span class="text-xl font-bold">SpaceVoyager</span>
             </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#destinations">Destinations</a></li>
-                <li><a href="#booking" class="active">Booking</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#login">Login</a></li>
-            </ul>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+                <a href="#" class="hover:text-cyan-400 transition">Destinations</a>
+                <a href="booking.html" class="text-cyan-400">Booking</a>
+                <a href="#" class="hover:text-cyan-400 transition">About</a>
+                <a href="login.html" class="hover:text-cyan-400 transition">Login</a>
+            </div>
         </div>
     </nav>
 
-    <div class="stars"></div>
+    <!-- Contenu principal -->
+    <main class="relative z-10 px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <!-- En-tête -->
+            <div class="text-center mb-12">
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-wider">
+                    Book Your Space Journey
+                </h1>
+                <p class="text-gray-300 text-lg">
+                    Begin your adventure to the stars. Fill out the form below to reserve your spot on<br>
+                    our next space voyage.
+                </p>
+            </div>
 
-    <main class="container">
-        <h1 class="main-title">Book Your Space Journey</h1>
-        <p class="subtitle">Begin your adventure to the stars. Fill out the form below to reserve your spot on our next space voyage.</p>
-
-        <form id="bookingForm" class="booking-form">
-            <section class="form-section">
-                <h2 class="section-title">Journey Details</h2>
-
-                <div class="form-group">
-                    <label for="destination">Destination</label>
-                    <select id="destination" name="destination" required>
-                        <option value="">Select your destination</option>
-                        <option value="moon">Moon</option>
-                        <option value="mars">Mars</option>
-                        <option value="iss">International Space Station</option>
-                        <option value="jupiter">Jupiter</option>
-                        <option value="saturn">Saturn</option>
-                    </select>
-                    <span class="error-message" id="destinationError"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="departureDate">Departure Date</label>
-                    <input type="date" id="departureDate" name="departureDate" placeholder="mm/dd/yyyy" required>
-                    <span class="error-message" id="departureDateError"></span>
-                </div>
-
-                <div class="form-group">
-                    <label>Number of Passengers</label>
-                    <div class="radio-group">
-                        <label class="radio-label">
-                            <input type="radio" name="passengers" value="solo" checked>
-                            <span>Solo Traveler</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="passengers" value="couple">
-                            <span>Couple (2)</span>
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="passengers" value="group">
-                            <span>Group (3-6)</span>
-                        </label>
+            <!-- Formulaire -->
+            <form id="bookingForm" class="space-y-8">
+                
+                <!-- Journey Details -->
+                <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                    <h2 class="text-2xl font-bold mb-6 tracking-wide">Journey Details</h2>
+                    
+                    <!-- Destination -->
+                    <div class="mb-6">
+                        <label for="destination" class="block text-sm font-medium mb-2">Destination</label>
+                        <select id="destination" name="destination" class="w-full px-4 py-3 rounded-lg text-white">
+                            <option value="">Select your destination</option>
+                            <option value="moon">The Moon</option>
+                            <option value="mars">Mars</option>
+                            <option value="iss">Orbital Station</option>
+                            <option value="jupiter">Europa</option>
+                            <option value="saturn">Titan</option>
+                        </select>
+                        <span class="error-message text-red-400 text-sm mt-1 block" id="destinationError"></span>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Accommodation Type</label>
-                    <div class="accommodation-options">
-                        <div class="accommodation-card" data-type="standard">
-                            <h3>Standard Cabin</h3>
-                            <p>Comfortable private quarters with basic amenities</p>
-                        </div>
-                        <div class="accommodation-card" data-type="luxury">
-                            <h3>Luxury Suite</h3>
-                            <p>Spacious suite with premium amenities and viewports</p>
-                        </div>
-                        <div class="accommodation-card" data-type="zerog">
-                            <h3>Zero-G Pod</h3>
-                            <p>Advanced accommodation with zero-gravity experience</p>
+                    <!-- Departure Date -->
+                    <div class="mb-6">
+                        <label for="departureDate" class="block text-sm font-medium mb-2">Departure Date</label>
+                        <input type="date" id="departureDate" name="departureDate" class="w-full px-4 py-3 rounded-lg text-white">
+                        <span class="error-message text-red-400 text-sm mt-1 block" id="departureDateError"></span>
+                    </div>
+
+                    <!-- Number of Passengers -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-3">Number of Passengers</label>
+                        <div class="flex gap-6">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="passengers" value="solo" class="mr-2" checked>
+                                <span>Solo Traveler</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="passengers" value="couple" class="mr-2">
+                                <span>Couple (2)</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="passengers" value="group" class="mr-2">
+                                <span>Group (3-6)</span>
+                            </label>
                         </div>
                     </div>
-                    <input type="hidden" id="accommodation" name="accommodation" value="standard">
-                    <span class="error-message" id="accommodationError"></span>
-                </div>
-            </section>
 
-            <section class="form-section">
-                <h2 class="section-title">Personal Information</h2>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
-                        <span class="error-message" id="firstNameError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
-                        <span class="error-message" id="lastNameError"></span>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                        <span class="error-message" id="emailError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
-                        <span class="error-message" id="phoneError"></span>
+                    <!-- Accommodation Type -->
+                    <div>
+                        <label class="block text-sm font-medium mb-3">Accommodation Type</label>
+                        <input type="hidden" id="accommodation" name="accommodation" value="standard">
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <!-- Standard Cabin -->
+                            <div class="accommodation-card border-2 border-slate-700 rounded-xl p-4 selected" data-type="standard">
+                                <h3 class="text-lg font-bold text-cyan-400 mb-2">Standard Cabin</h3>
+                                <p class="text-sm text-gray-400">Comfortable private quarters with basic amenities</p>
+                            </div>
+                            <!-- Luxury Suite -->
+                            <div class="accommodation-card border-2 border-slate-700 rounded-xl p-4" data-type="luxury">
+                                <h3 class="text-lg font-bold text-cyan-400 mb-2">Luxury Suite</h3>
+                                <p class="text-sm text-gray-400">Spacious suite with premium amenities and viewports</p>
+                            </div>
+                            <!-- Zero-G Pod -->
+                            <div class="accommodation-card border-2 border-slate-700 rounded-xl p-4" data-type="zero-g">
+                                <h3 class="text-lg font-bold text-cyan-400 mb-2">Zero-G Pod</h3>
+                                <p class="text-sm text-gray-400">Advanced accommodation with zero-gravity experience</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="requirements">Special Requirements</label>
-                    <textarea id="requirements" name="requirements" rows="5" placeholder="Any special requirements or notes..."></textarea>
+                <!-- Personal Information -->
+                <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                    <h2 class="text-2xl font-bold mb-6 tracking-wide">Personal Information</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <!-- First Name -->
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium mb-2">First Name</label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" class="w-full px-4 py-3 rounded-lg text-white" required>
+                            <span class="error-message text-red-400 text-sm mt-1 block" id="firstNameError"></span>
+                        </div>
+                        <!-- Last Name -->
+                        <div>
+                            <label for="lastName" class="block text-sm font-medium mb-2">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" class="w-full px-4 py-3 rounded-lg text-white" required>
+                            <span class="error-message text-red-400 text-sm mt-1 block" id="lastNameError"></span>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium mb-2">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full px-4 py-3 rounded-lg text-white" required>
+                            <span class="error-message text-red-400 text-sm mt-1 block" id="emailError"></span>
+                        </div>
+                        <!-- Phone -->
+                        <div>
+                            <label for="phone" class="block text-sm font-medium mb-2">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" class="w-full px-4 py-3 rounded-lg text-white" required>
+                            <span class="error-message text-red-400 text-sm mt-1 block" id="phoneError"></span>
+                        </div>
+                    </div>
+
+                    <!-- Special Requirements -->
+                    <div>
+                        <label for="requirements" class="block text-sm font-medium mb-2">Special Requirements</label>
+                        <textarea id="requirements" name="requirements" rows="4" placeholder="Any special requirements or notes..." class="w-full px-4 py-3 rounded-lg text-white resize-none"></textarea>
+                    </div>
                 </div>
-            </section>
 
-            <button type="button" class="btn-secondary" id="addPassengerBtn">Add Passenger</button>
+                <!-- Bouton Add Passenger -->
+                <button type="button" id="addPassengerBtn" class="w-full py-4 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold transition">
+                    Add Passenger
+                </button>
 
-            <button type="submit" class="btn-primary">Confirm Booking</button>
+                <!-- Bouton Submit -->
+                <button type="submit" class="w-full py-4 gradient-button rounded-xl text-white font-bold text-lg tracking-wider">
+                    Confirm Booking
+                </button>
 
-            <p class="terms">
-                By confirming, you agree to our 
-                <a href="#terms">Terms of Service</a> and 
-                <a href="#agreement">Space Travel Agreement</a>.
-            </p>
-        </form>
+                <!-- Terms -->
+                <p class="text-center text-sm text-gray-400">
+                    By confirming, you agree to our 
+                    <a href="#" class="text-cyan-400 hover:underline">Terms of Service</a> 
+                    and 
+                    <a href="#" class="text-cyan-400 hover:underline">Space Travel Agreement</a>.
+                </p>
+            </form>
+        </div>
     </main>
 
-    <script src="script.js"></script>
+    <script>
+// Données des destinations
+const destinations = {
+  "moon": {
+    "id": "moon",
+    "name": "The Moon",
+    "accommodations": ["standard", "luxury", "zero-g"]
+  },
+  "mars": {
+    "id": "mars",
+    "name": "Mars",
+    "accommodations": ["standard", "luxury", "zero-g"]
+  },
+  "iss": {
+    "id": "orbital-station",
+    "name": "Orbital Station",
+    "accommodations": ["standard", "luxury", "zero-g"]
+  },
+  "jupiter": {
+    "id": "europa",
+    "name": "Europa",
+    "accommodations": ["standard", "luxury"]
+  },
+  "saturn": {
+    "id": "titan",
+    "name": "Titan",
+    "accommodations": ["standard", "luxury"]
+  }
+};
+
+let passengerCount = 1;
+const maxPassengers = 6;
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+  initializeForm();
+});
+
+function initializeForm() {
+  const destinationSelect = document.getElementById('destination');
+  destinationSelect.addEventListener('change', handleDestinationChange);
+
+  const accommodationCards = document.querySelectorAll('.accommodation-card');
+  accommodationCards.forEach(card => {
+    card.addEventListener('click', function() {
+      selectAccommodation(this);
+    });
+  });
+
+  const passengerRadios = document.querySelectorAll('input[name="passengers"]');
+  passengerRadios.forEach(radio => {
+    radio.addEventListener('change', handlePassengerCountChange);
+  });
+
+  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  addPassengerBtn.style.display = 'none';
+  addPassengerBtn.addEventListener('click', addPassengerForm);
+
+  const bookingForm = document.getElementById('bookingForm');
+  bookingForm.addEventListener('submit', handleFormSubmit);
+
+  const departureDateInput = document.getElementById('departureDate');
+  const today = new Date().toISOString().split('T')[0];
+  departureDateInput.setAttribute('min', today);
+}
+
+function handleDestinationChange(e) {
+  const selectedDestination = e.target.value;
+  
+  if (!selectedDestination) {
+    document.querySelectorAll('.accommodation-card').forEach(card => {
+      card.style.display = 'block';
+      card.classList.remove('disabled');
+    });
+    return;
+  }
+
+  const destination = destinations[selectedDestination];
+  const accommodationCards = document.querySelectorAll('.accommodation-card');
+  
+  accommodationCards.forEach(card => {
+    const cardType = card.getAttribute('data-type');
+    
+    if (destination.accommodations.includes(cardType)) {
+      card.style.display = 'block';
+      card.classList.remove('disabled');
+    } else {
+      card.style.display = 'none';
+      card.classList.add('disabled');
+      
+      if (card.classList.contains('selected')) {
+        card.classList.remove('selected');
+        const firstAvailable = document.querySelector(`.accommodation-card[data-type="${destination.accommodations[0]}"]`);
+        if (firstAvailable) {
+          selectAccommodation(firstAvailable);
+        }
+      }
+    }
+  });
+}
+
+function selectAccommodation(card) {
+  if (card.classList.contains('disabled')) return;
+  
+  document.querySelectorAll('.accommodation-card').forEach(c => {
+    c.classList.remove('selected');
+  });
+  
+  card.classList.add('selected');
+  const accommodationType = card.getAttribute('data-type');
+  document.getElementById('accommodation').value = accommodationType;
+}
+
+function handlePassengerCountChange(e) {
+  const value = e.target.value;
+  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  
+  removeAllPassengerForms();
+  
+  if (value === 'solo') {
+    passengerCount = 1;
+    addPassengerBtn.style.display = 'none';
+  } else if (value === 'couple') {
+    passengerCount = 2;
+    addPassengerForm();
+    addPassengerBtn.style.display = 'none';
+  } else if (value === 'group') {
+    passengerCount = 3;
+    addPassengerForm();
+    addPassengerForm();
+    addPassengerBtn.style.display = 'block';
+  }
+}
+
+function removeAllPassengerForms() {
+  const extraForms = document.querySelectorAll('.passenger-form');
+  extraForms.forEach(form => form.remove());
+  passengerCount = 1;
+}
+
+function addPassengerForm() {
+  if (passengerCount >= maxPassengers) {
+    alert(`Maximum ${maxPassengers} passengers allowed.`);
+    return;
+  }
+
+  passengerCount++;
+  
+  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  
+  const passengerForm = document.createElement('div');
+  passengerForm.className = 'passenger-form bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50';
+  passengerForm.innerHTML = `
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold tracking-wide">Passenger ${passengerCount} Information</h2>
+      <button type="button" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500 rounded-lg text-red-400 font-semibold transition flex items-center gap-2" onclick="removePassengerForm(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Remove Passenger
+      </button>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <div>
+        <label for="firstName${passengerCount}" class="block text-sm font-medium mb-2">First Name</label>
+        <input type="text" id="firstName${passengerCount}" name="firstName${passengerCount}" placeholder="Enter first name" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message text-red-400 text-sm mt-1 block" id="firstName${passengerCount}Error"></span>
+      </div>
+      <div>
+        <label for="lastName${passengerCount}" class="block text-sm font-medium mb-2">Last Name</label>
+        <input type="text" id="lastName${passengerCount}" name="lastName${passengerCount}" placeholder="Enter last name" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message text-red-400 text-sm mt-1 block" id="lastName${passengerCount}Error"></span>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label for="email${passengerCount}" class="block text-sm font-medium mb-2">Email Address</label>
+        <input type="email" id="email${passengerCount}" name="email${passengerCount}" placeholder="Enter email" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message text-red-400 text-sm mt-1 block" id="email${passengerCount}Error"></span>
+      </div>
+      <div>
+        <label for="phone${passengerCount}" class="block text-sm font-medium mb-2">Phone Number</label>
+        <input type="tel" id="phone${passengerCount}" name="phone${passengerCount}" placeholder="Enter phone number" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message text-red-400 text-sm mt-1 block" id="phone${passengerCount}Error"></span>
+      </div>
+    </div>
+  `;
+  
+  addPassengerBtn.parentNode.insertBefore(passengerForm, addPassengerBtn);
+  
+  if (passengerCount >= maxPassengers) {
+    addPassengerBtn.style.display = 'none';
+  }
+}
+
+function removePassengerForm(button) {
+  const passengerForm = button.closest('.passenger-form');
+  passengerForm.remove();
+  passengerCount--;
+  
+  const groupRadio = document.querySelector('input[name="passengers"][value="group"]');
+  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  
+  if (groupRadio.checked && passengerCount < maxPassengers) {
+    addPassengerBtn.style.display = 'block';
+  }
+  
+  renumberPassengers();
+}
+
+function renumberPassengers() {
+  const passengerForms = document.querySelectorAll('.passenger-form');
+  passengerForms.forEach((form, index) => {
+    const passengerNumber = index + 2;
+    const title = form.querySelector('h2');
+    if (title) {
+      title.textContent = `Passenger ${passengerNumber} Information`;
+    }
+  });
+}
+
+function validateForm() {
+  let isValid = true;
+  
+  document.querySelectorAll('.error-message').forEach(msg => {
+    msg.textContent = '';
+  });
+  
+  const destination = document.getElementById('destination').value;
+  if (!destination) {
+    document.getElementById('destinationError').textContent = 'Please select a destination';
+    isValid = false;
+  }
+  
+  const departureDate = document.getElementById('departureDate').value;
+  if (!departureDate) {
+    document.getElementById('departureDateError').textContent = 'Please select a departure date';
+    isValid = false;
+  }
+  
+  const firstName = document.getElementById('firstName').value.trim();
+  if (!firstName) {
+    document.getElementById('firstNameError').textContent = 'First name is required';
+    isValid = false;
+  }
+  
+  const lastName = document.getElementById('lastName').value.trim();
+  if (!lastName) {
+    document.getElementById('lastNameError').textContent = 'Last name is required';
+    isValid = false;
+  }
+  
+  const email = document.getElementById('email').value.trim();
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email) {
+    document.getElementById('emailError').textContent = 'Email is required';
+    isValid = false;
+  } else if (!emailRegex.test(email)) {
+    document.getElementById('emailError').textContent = 'Please enter a valid email';
+    isValid = false;
+  }
+  
+  const phone = document.getElementById('phone').value.trim();
+  if (!phone) {
+    document.getElementById('phoneError').textContent = 'Phone number is required';
+    isValid = false;
+  }
+  
+  return isValid;
+}
+
+function handleFormSubmit(e) {
+  e.preventDefault();
+  
+  if (validateForm()) {
+    const formData = {
+      destination: document.getElementById('destination').value,
+      departureDate: document.getElementById('departureDate').value,
+      passengers: document.querySelector('input[name="passengers"]:checked').value,
+      accommodation: document.getElementById('accommodation').value,
+      mainPassenger: {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value
+      },
+      requirements: document.getElementById('requirements').value,
+      additionalPassengers: []
+    };
+    
+    const passengerForms = document.querySelectorAll('.passenger-form');
+    passengerForms.forEach((form, index) => {
+      const passengerNum = index + 2;
+      formData.additionalPassengers.push({
+        firstName: document.getElementById(`firstName${passengerNum}`).value,
+        lastName: document.getElementById(`lastName${passengerNum}`).value,
+        email: document.getElementById(`email${passengerNum}`).value,
+        phone: document.getElementById(`phone${passengerNum}`).value
+      });
+    });
+    
+    console.log('Booking Data:', formData);
+    alert('Booking confirmed! Thank you for choosing SpaceVoyager. We will contact you shortly with more details.');
+  } else {
+    alert('Please fill in all required fields correctly.');
+  }
+}
+    </script>
 </body>
 </html>

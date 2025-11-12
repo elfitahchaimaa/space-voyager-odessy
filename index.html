@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceVoyager - Your Journey to the Stars</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+        .star:nth-child(2) { top: 20%; left: 80%; animation-delay: 0.5s; }
+        .star:nth-child(3) { top: 30%; left: 40%; animation-delay: 1s; }
+        .star:nth-child(4) { top: 40%; left: 60%; animation-delay: 1.5s; }
+        .star:nth-child(5) { top: 50%; left: 10%; animation-delay: 2s; }
+        .star:nth-child(6) { top: 60%; left: 90%; animation-delay: 2.5s; }
+        .star:nth-child(7) { top: 70%; left: 30%; animation-delay: 0.8s; }
+        .star:nth-child(8) { top: 80%; left: 70%; animation-delay: 1.3s; }
+        .star:nth-child(9) { top: 15%; left: 50%; animation-delay: 1.8s; }
+        .star:nth-child(10) { top: 85%; left: 15%; animation-delay: 0.3s; }
+        .star:nth-child(11) { top: 25%; left: 75%; animation-delay: 2.2s; }
+        .star:nth-child(12) { top: 45%; left: 25%; animation-delay: 0.7s; }
+        .star:nth-child(13) { top: 65%; left: 85%; animation-delay: 1.2s; }
+        .star:nth-child(14) { top: 5%; left: 45%; animation-delay: 1.7s; }
+        .star:nth-child(15) { top: 75%; left: 55%; animation-delay: 0.2s; }
+
+        .title-glow {
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
+                         0 0 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .destination-card {
+            transition: all 0.3s ease;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 255, 255, 0.3);
+        }
+
+        .gradient-button {
+            background: linear-gradient(90deg, #00d4ff 0%, #9333ea 100%);
+            transition: all 0.3s ease;
+        }
+
+        .gradient-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(147, 51, 234, 0.4);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Étoiles animées -->
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">SpaceVoyager</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-cyan-400">Home</a>
+                <a href="#destinations" class="hover:text-cyan-400 transition">Destinations</a>
+                <a href="booking.html" class="hover:text-cyan-400 transition">Booking</a>
+                <a href="#about" class="hover:text-cyan-400 transition">About</a>
+                <a href="login.html" class="hover:text-cyan-400 transition">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Section Hero -->
+    <section class="relative z-10 px-6 py-20">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-6xl md:text-8xl font-bold mb-6 title-glow tracking-wider">
+                Explore the Universe
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+                Embark on an extraordinary journey beyond Earth. Experience the wonders of space with 
+                luxury accommodations and unforgettable adventures.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="booking.html" class="px-8 py-4 gradient-button rounded-xl text-white font-bold text-lg tracking-wider">
+                    Book Your Journey
+                </a>
+                <a href="#destinations" class="px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold transition">
+                    Explore Destinations
+                </a>
+            </div>
+        </div>
+
+        <!-- Illustration fusée -->
+        <div class="max-w-7xl mx-auto mt-20 flex justify-center">
+            <svg class="w-64 h-64 floating" viewBox="0 0 200 200" fill="none">
+                <path d="M100 20L120 80H80L100 20Z" fill="url(#gradient1)"/>
+                <rect x="85" y="80" width="30" height="60" rx="5" fill="url(#gradient2)"/>
+                <circle cx="100" cy="100" r="8" fill="#00ffff"/>
+                <path d="M80 120L70 140L80 135V120Z" fill="#00d4ff"/>
+                <path d="M120 120L130 140L120 135V120Z" fill="#00d4ff"/>
+                <defs>
+                    <linearGradient id="gradient1" x1="100" y1="20" x2="100" y2="80">
+                        <stop offset="0%" stop-color="#00d4ff"/>
+                        <stop offset="100%" stop-color="#9333ea"/>
+                    </linearGradient>
+                    <linearGradient id="gradient2" x1="100" y1="80" x2="100" y2="140">
+                        <stop offset="0%" stop-color="#1e293b"/>
+                        <stop offset="100%" stop-color="#334155"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Section Destinations -->
+    <section id="destinations" class="relative z-10 px-6 py-20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-5xl font-bold text-center mb-4">Our Destinations</h2>
+            <p class="text-center text-gray-300 mb-16 text-lg">
+                Choose your next cosmic adventure
+            </p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- The Moon -->
+                <div class="destination-card bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                    <div class="text-4xl mb-4">🌙</div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-3">The Moon</h3>
+                    <p class="text-gray-300 mb-4">
+                        Experience Earth's closest neighbor with stunning views and low-gravity adventures.
+                    </p>
+                    <ul class="text-sm text-gray-400 mb-6 space-y-2">
+                        <li>✓ 3-day journey</li>
+                        <li>✓ Lunar surface exploration</li>
+                        <li>✓ Earth view observatory</li>
+                    </ul>
+                    <a href="booking.html" class="block text-center py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500 rounded-lg text-cyan-400 font-semibold transition">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Mars -->
+                <div class="destination-card bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                    <div class="text-4xl mb-4">🔴</div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-3">Mars</h3>
+                    <p class="text-gray-300 mb-4">
+                        Discover the Red Planet and be among the first to explore Martian landscapes.
+                    </p>
+                    <ul class="text-sm text-gray-400 mb-6 space-y-2">
+                        <li>✓ 6-month journey</li>
+                        <li>✓ Olympus Mons trek</li>
+                        <li>✓ Research station visit</li>
+                    </ul>
+                    <a href="booking.html" class="block text-center py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500 rounded-lg text-cyan-400 font-semibold transition">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Orbital Station -->
+                <div class="destination-card bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                    <div class="text-4xl mb-4">🛸</div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-3">Orbital Station</h3>
+                    <p class="text-gray-300 mb-4">
+                        Live in zero gravity aboard our luxury orbital station with panoramic views.
+                    </p>
+                    <ul class="text-sm text-gray-400 mb-6 space-y-2">
+                        <li>✓ 1-week stay</li>
+                        <li>✓ Zero-gravity experience</li>
+                        <li>✓ 360° Earth views</li>
+                    </ul>
+                    <a href="booking.html" class="block text-center py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500 rounded-lg text-cyan-400 font-semibold transition">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Europa -->
+                <div class="destination-card bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                    <div class="text-4xl mb-4">🪐</div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-3">Europa</h3>
+                    <p class="text-gray-300 mb-4">
+                        Explore Jupiter's mysterious moon with its vast underground ocean.
+                    </p>
+                    <ul class="text-sm text-gray-400 mb-6 space-y-2">
+                        <li>✓ 2-year journey</li>
+                        <li>✓ Ice exploration</li>
+                        <li>✓ Jupiter observation</li>
+                    </ul>
+                    <a href="booking.html" class="block text-center py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500 rounded-lg text-cyan-400 font-semibold transition">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Titan -->
+                <div class="destination-card bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                    <div class="text-4xl mb-4">🪐</div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-3">Titan</h3>
+                    <p class="text-gray-300 mb-4">
+                        Visit Saturn's largest moon with its unique atmosphere and methane lakes.
+                    </p>
+                    <ul class="text-sm text-gray-400 mb-6 space-y-2">
+                        <li>✓ 3-year journey</li>
+                        <li>✓ Methane lake tours</li>
+                        <li>✓ Saturn ring views</li>
+                    </ul>
+                    <a href="booking.html" class="block text-center py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500 rounded-lg text-cyan-400 font-semibold transition">
+                        Book Now
+                    </a>
+                </div>
+
+                <!-- Asteroid Belt -->
+                <div class="destination-card bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
+                    <div class="text-4xl mb-4">☄️</div>
+                    <h3 class="text-2xl font-bold text-cyan-400 mb-3">Asteroid Belt</h3>
+                    <p class="text-gray-300 mb-4">
+                        Navigate through the asteroid belt and witness cosmic mining operations.
+                    </p>
+                    <ul class="text-sm text-gray-400 mb-6 space-y-2">
+                        <li>✓ 1-year journey</li>
+                        <li>✓ Mining station visit</li>
+                        <li>✓ Asteroid landing</li>
+                    </ul>
+                    <a href="booking.html" class="block text-center py-3 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500 rounded-lg text-cyan-400 font-semibold transition">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Features -->
+    <section class="relative z-10 px-6 py-20">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-5xl font-bold text-center mb-16">Why Choose SpaceVoyager</h2>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Safety First</h3>
+                    <p class="text-gray-300">
+                        State-of-the-art spacecraft with the highest safety standards and experienced crew.
+                    </p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Luxury Comfort</h3>
+                    <p class="text-gray-300">
+                        Premium accommodations with all amenities for the most comfortable space journey.
+                    </p>
+                </div>
+
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-teal-400 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">24/7 Support</h3>
+                    <p class="text-gray-300">
+                        Round-the-clock customer support before, during, and after your space journey.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section About -->
+    <section id="about" class="relative z-10 px-6 py-20">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-5xl font-bold mb-6">About SpaceVoyager</h2>
+            <p class="text-xl text-gray-300 mb-8">
+                Since 2035, SpaceVoyager has been pioneering commercial space travel, making the cosmos 
+                accessible to adventurers worldwide. Our mission is to transform humanity into a 
+                multi-planetary species while providing unforgettable experiences.
+            </p>
+            <div class="grid md:grid-cols-3 gap-8 mt-12">
+                <div>
+                    <div class="text-4xl font-bold text-cyan-400 mb-2">10K+</div>
+                    <div class="text-gray-300">Happy Travelers</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-cyan-400 mb-2">50+</div>
+                    <div class="text-gray-300">Destinations</div>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-cyan-400 mb-2">99.9%</div>
+                    <div class="text-gray-300">Safety Rating</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 px-6 py-12 border-t border-slate-700/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold">SpaceVoyager</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">
+                        Your gateway to the stars
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Destinations</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-cyan-400">The Moon</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Mars</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Orbital Station</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Europa</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-cyan-400">About Us</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Careers</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Press</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Support</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-cyan-400">Help Center</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-cyan-400">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-slate-700/50 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; 2025 SpaceVoyager. All rights reserved. Journey responsibly.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
