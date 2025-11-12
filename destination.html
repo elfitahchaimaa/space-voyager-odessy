@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Destinations - SpaceVoyager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body class="text-white font-sans">
+  <!-- Étoiles animées -->
+  <div class="stars">
+    <div class="star" style="top:10%;left:20%;animation-delay:0s;"></div>
+    <div class="star" style="top:25%;left:70%;animation-delay:0.8s;"></div>
+    <div class="star" style="top:40%;left:40%;animation-delay:1.2s;"></div>
+    <div class="star" style="top:70%;left:80%;animation-delay:1.6s;"></div>
+    <div class="star" style="top:85%;left:15%;animation-delay:2s;"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="relative z-10 px-6 py-4 border-b border-slate-700/50 backdrop-blur-sm bg-slate-900/50">
+    <nav class="max-w-7xl mx-auto flex items-center justify-between">
+      <!-- Logo -->
+      <a href="index.html" class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+          </svg>
+        </div>
+        <span class="text-xl font-bold">SpaceVoyager</span>
+      </a>
+
+      <!-- Nav links -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+        <a href="destinations.html" class="text-cyan-400 border-b-2 border-cyan-400 pb-1">Destinations</a>
+        <a href="booking.html" class="hover:text-cyan-400 transition">Booking</a>
+        <a href="my-bookings.html" class="hover:text-cyan-400 transition">My Bookings</a>
+        <span id="userEmail" class="text-cyan-300 hidden"></span>
+        <a id="loginLink" href="login.html" class="text-cyan-400">Login</a>
+        <button id="logoutBtn" class="hidden bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-lg text-white transition">Logout</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="relative z-10 px-6 py-12 max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-4 text-center">Explore Our Destinations</h1>
+    <p class="text-gray-400 text-center mb-10">Choose your next cosmic adventure</p>
+
+    <!-- Filters Section -->
+    <section class="bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 mb-10">
+      <div class="flex flex-col md:flex-row gap-6 items-center justify-between">
+        <!-- Search -->
+        <div class="flex items-center w-full md:w-1/2 bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
+          <input id="searchInput" type="text" placeholder="Search destinations..." class="flex-1 bg-transparent px-4 py-3 text-white placeholder-gray-400 focus:outline-none">
+          <button id="searchBtn" class="px-4 py-3 bg-cyan-600 hover:bg-cyan-500 transition">🔍</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+          <div>
+            <label for="typeFilter" class="block text-sm text-gray-400 mb-1">Type</label>
+            <select id="typeFilter" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2">
+              <option value="">All</option>
+              <option value="planet">Planet</option>
+              <option value="moon">Moon</option>
+              <option value="station">Station</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Min Price</label>
+            <input id="minPrice" type="number" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2" placeholder="0">
+          </div>
+          <div>
+            <label class="block text-sm text-gray-400 mb-1">Max Price</label>
+            <input id="maxPrice" type="number" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2" placeholder="5000">
+          </div>
+          <div class="flex items-end">
+            <button id="clearFiltersBtn" class="w-full bg-slate-700 hover:bg-slate-600 rounded-lg py-2">Clear</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <div class="text-gray-400 mb-4 text-sm" id="resultsCount">Showing 0 destinations</div>
+
+    <!-- Grid -->
+    <section id="destinationsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Exemple de carte (sera généré par JS) -->
+      <div class="bg-slate-900/70 border border-slate-700 rounded-2xl p-6 backdrop-blur-sm hover:scale-[1.02] transition transform cursor-pointer">
+        <img src="https://images.unsplash.com/photo-1580428180128-24d1a3c2a8b1?auto=format&fit=crop&w=800&q=80" alt="Mars" class="rounded-xl mb-4">
+        <h3 class="text-xl font-bold mb-2 text-cyan-400">Mars Expedition</h3>
+        <p class="text-gray-400 mb-4">Experience the red planet up close with a 10-day guided adventure.</p>
+        <div class="flex justify-between items-center">
+          <span class="text-cyan-300 font-semibold">$3200</span>
+          <button class="bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-2 rounded-lg font-semibold">Book</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-center gap-4 mt-10">
+      <button id="prevBtn" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg disabled:opacity-50">Previous</button>
+      <div id="pageNumbers" class="flex gap-2 text-cyan-400">1</div>
+      <button id="nextBtn" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg disabled:opacity-50">Next</button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-slate-700/50 bg-slate-900/60 backdrop-blur-sm mt-16 py-10">
+    <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-gray-400">
+      <div>
+        <h4 class="text-white font-semibold text-lg mb-2">SpaceVoyager</h4>
+        <p>Your gateway to the stars</p>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold text-lg mb-2">Quick Links</h4>
+        <ul class="space-y-2">
+          <li><a href="destinations.html" class="hover:text-cyan-400">Destinations</a></li>
+          <li><a href="booking.html" class="hover:text-cyan-400">Book Now</a></li>
+          <li><a href="my-bookings.html" class="hover:text-cyan-400">My Bookings</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold text-lg mb-2">Support</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-cyan-400">Help Center</a></li>
+          <li><a href="#" class="hover:text-cyan-400">Contact Us</a></li>
+          <li><a href="#" class="hover:text-cyan-400">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="text-center text-gray-500 text-sm mt-8">
+      &copy; 2025 SpaceVoyager. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Auth & Session Script -->
+  <script>
+   // -----------------------------
+// SpaceVoyager - Destinations Page Logic
+// -----------------------------
+
+const destinationsGrid = document.getElementById("destinationsGrid");
+const searchInput = document.getElementById("searchInput");
+const typeFilter = document.getElementById("typeFilter");
+const minPriceInput = document.getElementById("minPrice");
+const maxPriceInput = document.getElementById("maxPrice");
+const minDurationInput = document.getElementById("minDuration");
+const maxDurationInput = document.getElementById("maxDuration");
+const minDistanceInput = document.getElementById("minDistance");
+const maxDistanceInput = document.getElementById("maxDistance");
+const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+const resultsCount = document.getElementById("resultsCount");
+const pagination = document.getElementById("pagination");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const pageNumbers = document.getElementById("pageNumbers");
+
+// Global data
+let allDestinations = [];
+let filteredDestinations = [];
+let currentPage = 1;
+const perPage = 4;
+
+// -----------------------------
+// 1️⃣ Load destinations JSON
+// -----------------------------
+async function loadDestinations() {
+  try {
+    const response = await fetch("destinations.json");
+    const data = await response.json();
+    allDestinations = data.destinations;
+    filteredDestinations = [...allDestinations];
+    renderDestinations();
+  } catch (error) {
+    console.error("Error loading destinations.json:", error);
+    destinationsGrid.innerHTML =
+      "<p class='text-red-400 text-center w-full'>Failed to load destinations.</p>";
+  }
+}
+
+// -----------------------------
+// 2️⃣ Render destinations (paginated)
+// -----------------------------
+function renderDestinations() {
+  destinationsGrid.innerHTML = "";
+
+  // Pagination setup
+  const total = filteredDestinations.length;
+  const totalPages = Math.ceil(total / perPage);
+  if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+  const start = (currentPage - 1) * perPage;
+  const end = start + perPage;
+  const visibleDestinations = filteredDestinations.slice(start, end);
+
+  // Update result count
+  resultsCount.textContent = `Showing ${visibleDestinations.length} of ${total} destination(s)`;
+
+  // Display cards
+  if (visibleDestinations.length === 0) {
+    destinationsGrid.innerHTML = `
+      <div class="col-span-full text-center text-gray-400 py-10">
+        No destinations match your criteria.
+      </div>
+    `;
+  } else {
+    visibleDestinations.forEach((d) => {
+      const card = document.createElement("div");
+      card.className =
+        "bg-slate-900/70 border border-slate-700 rounded-2xl p-6 backdrop-blur-sm hover:scale-[1.02] transition transform cursor-pointer";
+      card.innerHTML = `
+        <img src="${d.thumbnail || d.image}" alt="${d.name}" class="rounded-xl mb-4 w-full h-48 object-cover">
+        <h3 class="text-xl font-bold mb-2 text-cyan-400">${d.name}</h3>
+        <p class="text-gray-400 mb-4">${d.shortDescription}</p>
+        <div class="flex justify-between items-center text-sm text-gray-400 mb-2">
+          <span>Duration: ${d.travelDuration}</span>
+          <span>Distance: ${d.distance}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-cyan-300 font-semibold">$${d.price.toLocaleString()}</span>
+          <button class="bg-gradient-to-r from-cyan-500 to-blue-500 px-4 py-2 rounded-lg font-semibold">Book</button>
+        </div>
+      `;
+      destinationsGrid.appendChild(card);
+    });
+  }
+
+  // Pagination UI
+  updatePagination(totalPages);
+}
+
+// -----------------------------
+// 3️⃣ Pagination Controls
+// -----------------------------
+function updatePagination(totalPages) {
+  pageNumbers.innerHTML = "";
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.className = `px-3 py-1 rounded-lg ${
+      i === currentPage
+        ? "bg-cyan-600 text-white"
+        : "bg-slate-800 text-gray-400 hover:bg-slate-700"
+    }`;
+    btn.addEventListener("click", () => {
+      currentPage = i;
+      renderDestinations();
+    });
+    pageNumbers.appendChild(btn);
+  }
+
+  prevBtn.disabled = currentPage === 1;
+  nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+}
+
+// Navigation buttons
+prevBtn.addEventListener("click", () => {
+  if (currentPage > 1) {
+    currentPage--;
+    renderDestinations();
+  }
+});
+nextBtn.addEventListener("click", () => {
+  const totalPages = Math.ceil(filteredDestinations.length / perPage);
+  if (currentPage < totalPages) {
+    currentPage++;
+    renderDestinations();
+  }
+});
+
+// -----------------------------
+// 4️⃣ Filter & Search Logic
+// -----------------------------
+function applyFilters() {
+  const searchTerm = searchInput.value.toLowerCase().trim();
+  const type = typeFilter.value;
+  const minPrice = parseFloat(minPriceInput.value) || 0;
+  const maxPrice = parseFloat(maxPriceInput.value) || Infinity;
+  const minDuration = parseFloat(minDurationInput?.value) || 0;
+  const maxDuration = parseFloat(maxDurationInput?.value) || Infinity;
+  const minDistance = parseFloat(minDistanceInput?.value) || 0;
+  const maxDistance = parseFloat(maxDistanceInput?.value) || Infinity;
+
+  filteredDestinations = allDestinations.filter((d) => {
+    const matchesSearch =
+      d.name.toLowerCase().includes(searchTerm) ||
+      d.description.toLowerCase().includes(searchTerm) ||
+      d.planet.toLowerCase().includes(searchTerm);
+
+    const matchesType = !type || d.id.includes(type) || d.planet.toLowerCase().includes(type);
+
+    const matchesPrice = d.price >= minPrice && d.price <= maxPrice;
+
+    // Convert distance strings like "384,400 km" or "54.6 million km"
+    const numericDistance = parseFloat(
+      d.distance.replace(/[^0-9.]/g, "")
+    );
+    const matchesDistance = numericDistance >= minDistance && numericDistance <= maxDistance;
+
+    // Extract duration number (days or months)
+    const durationStr = d.travelDuration.toLowerCase();
+    let numericDuration = 0;
+    if (durationStr.includes("day")) {
+      numericDuration = parseFloat(durationStr);
+    } else if (durationStr.includes("month")) {
+      numericDuration = parseFloat(durationStr) * 30;
+    } else if (durationStr.includes("year")) {
+      numericDuration = parseFloat(durationStr) * 365;
+    }
+
+    const matchesDuration = numericDuration >= minDuration && numericDuration <= maxDuration;
+
+    return (
+      matchesSearch && matchesType && matchesPrice && matchesDistance && matchesDuration
+    );
+  });
+
+  currentPage = 1;
+  renderDestinations();
+}
+
+// -----------------------------
+// 5️⃣ Clear Filters
+// -----------------------------
+clearFiltersBtn.addEventListener("click", () => {
+  searchInput.value = "";
+  typeFilter.value = "";
+  minPriceInput.value = "";
+  maxPriceInput.value = "";
+  if (minDurationInput) minDurationInput.value = "";
+  if (maxDurationInput) maxDurationInput.value = "";
+  if (minDistanceInput) minDistanceInput.value = "";
+  if (maxDistanceInput) maxDistanceInput.value = "";
+  filteredDestinations = [...allDestinations];
+  currentPage = 1;
+  renderDestinations();
+});
+
+// -----------------------------
+// 6️⃣ Live Updates on Input
+// -----------------------------
+[searchInput, typeFilter, minPriceInput, maxPriceInput, minDurationInput, maxDurationInput, minDistanceInput, maxDistanceInput]
+  .forEach((el) => {
+    if (el) el.addEventListener("input", applyFilters);
+  });
+
+// -----------------------------
+// 7️⃣ Initialize
+// -----------------------------
+loadDestinations();
+
+  </script>
+</body>
+</html>
