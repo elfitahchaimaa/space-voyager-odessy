@@ -117,13 +117,19 @@
                 </div>
                 <span class="text-xl font-bold">SpaceVoyager</span>
             </a>
-            <div class="hidden md:flex items-center gap-8">
-                <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
-                <a href="index.html#destinations" class="hover:text-cyan-400 transition">Destinations</a>
-                <a href="booking.html" class="hover:text-cyan-400 transition">Booking</a>
-                <a href="index.html#about" class="hover:text-cyan-400 transition">About</a>
-                <a href="login.html" class="text-cyan-400">Login</a>
-            </div>
+         <div id="navLinks" class="hidden md:flex items-center gap-8">
+         <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+         <a href="index.html#destinations" class="hover:text-cyan-400 transition">Destinations</a>
+        <a href="booking.html" class="hover:text-cyan-400 transition">Booking</a>
+        <a href="index.html#about" class="hover:text-cyan-400 transition">About</a>
+    <!-- Élément affiché selon la session -->
+        <a id="loginLink" href="login.html" class="text-cyan-400">Login</a>
+        <span id="userEmail" class="text-cyan-300 hidden"></span>
+        <button id="logoutBtn" class="hidden bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-lg text-white transition">
+            Logout
+        </button>
+</div>
+
         </div>
     </nav>
 
@@ -269,79 +275,142 @@
         </div>
     </main>
 
-    <script>
-        // Gestion des onglets
-        const loginTab = document.getElementById('loginTab');
-        const signupTab = document.getElementById('signupTab');
-        const loginForm = document.getElementById('loginForm');
-        const signupForm = document.getElementById('signupForm');
+   <script>
+  // Vérifie si l'utilisateur est déjà connecté
+  const existingSession = JSON.parse(localStorage.getItem('userSession'));
+  if (existingSession && existingSession.isLoggedIn) {
+    window.location.href = 'booking.html';
+  }
 
-        loginTab.addEventListener('click', function() {
-            loginTab.classList.add('active');
-            loginTab.classList.remove('text-gray-400');
-            signupTab.classList.remove('active');
-            signupTab.classList.add('text-gray-400');
-            loginForm.classList.remove('hidden');
-            signupForm.classList.add('hidden');
-        });
+  // Gestion des onglets
+  const loginTab = document.getElementById('loginTab');
+  const signupTab = document.getElementById('signupTab');
+  const loginForm = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
 
-        signupTab.addEventListener('click', function() {
-            signupTab.classList.add('active');
-            signupTab.classList.remove('text-gray-400');
-            loginTab.classList.remove('active');
-            loginTab.classList.add('text-gray-400');
-            signupForm.classList.remove('hidden');
-            loginForm.classList.add('hidden');
-        });
+  loginTab.addEventListener('click', function() {
+    loginTab.classList.add('active');
+    signupTab.classList.remove('active');
+    loginForm.classList.remove('hidden');
+    signupForm.classList.add('hidden');
+  });
 
-        // Gestion du formulaire de login
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            console.log('Login attempt:', { email, password });
-            
-            alert('Welcome back, Space Explorer! 🚀\nRedirecting to your dashboard...');
-            
-            // Simuler une redirection
-            setTimeout(() => {
-                window.location.href = 'booking.html';
-            }, 1500);
-        });
+  signupTab.addEventListener('click', function() {
+    signupTab.classList.add('active');
+    loginTab.classList.remove('active');
+    signupForm.classList.remove('hidden');
+    loginForm.classList.add('hidden');
+  });
 
-        // Gestion du formulaire de signup
-        signupForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const firstName = document.getElementById('signupFirstName').value;
-            const lastName = document.getElementById('signupLastName').value;
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirmPassword = document.getElementById('signupConfirmPassword').value;
-            
-            // Vérifier que les mots de passe correspondent
-            if (password !== confirmPassword) {
-                alert('Passwords do not match! Please try again.');
-                return;
-            }
-            
-            // Vérifier la longueur du mot de passe
-            if (password.length < 6) {
-                alert('Password must be at least 6 characters long.');
-                return;
-            }
-            
-            console.log('Signup attempt:', { firstName, lastName, email, password });
-            
-            alert(`Welcome aboard, ${firstName}! 🚀\nYour account has been created successfully.`);
-            
-            // Simuler une redirection
-            setTimeout(() => {
-                window.location.href = 'booking.html';
-            }, 1500);
-        });
-    </script>
+  // Gestion du formulaire de login
+  loginForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+      alert('Please enter your email and password.');
+      return;
+    }
+
+    // Simule une connexion réussie
+    const userSession = {
+      isLoggedIn: true,
+      email: email
+    };
+    localStorage.setItem('userSession', JSON.stringify(userSession));
+
+    alert('Welcome back, Space Explorer! 🚀');
+    setTimeout(() => {
+      window.location.href = 'booking.html';
+    }, 1000);
+  });
+
+  // Gestion du formulaire de signup
+  signupForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const firstName = document.getElementById('signupFirstName').value;
+    const lastName = document.getElementById('signupLastName').value;
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters.');
+      return;
+    }
+
+    // Simule un enregistrement et une connexion
+    const userSession = {
+      isLoggedIn: true,
+      email: email,
+      firstName: firstName,
+      lastName: lastName
+    };
+    localStorage.setItem('userSession', JSON.stringify(userSession));
+
+    alert(`Welcome aboard, ${firstName}! 🚀`);
+    setTimeout(() => {
+      window.location.href = 'booking.html';
+    }, 1000);
+  });
+
+  // Vérifie la session et met à jour le header
+  document.addEventListener('DOMContentLoaded', () => {
+    const sessionData = JSON.parse(localStorage.getItem('userSession'));
+    const nav = document.querySelector('nav .max-w-7xl');
+
+    if (sessionData && sessionData.isLoggedIn) {
+      const links = nav.querySelector('.hidden.md\\:flex');
+      links.innerHTML = `
+        <span class="text-cyan-400">Welcome, ${sessionData.firstName || sessionData.email}</span>
+        <button id="logoutBtn" class="hover:text-red-400 transition">Logout</button>
+      `;
+
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('userSession');
+        alert('You have been logged out.');
+        window.location.href = 'index.html';
+      });
+    }
+  });
+  // -------------------- SESSION MANAGEMENT --------------------
+
+// Vérifier si un utilisateur est connecté au chargement de la page
+document.addEventListener("DOMContentLoaded", () => {
+    const userSession = JSON.parse(localStorage.getItem("userSession"));
+    const loginLink = document.getElementById("loginLink");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userEmailSpan = document.getElementById("userEmail");
+
+    if (userSession && userSession.isLoggedIn) {
+        // Afficher l'email et le bouton logout
+        loginLink.classList.add("hidden");
+        userEmailSpan.textContent = userSession.email;
+        userEmailSpan.classList.remove("hidden");
+        logoutBtn.classList.remove("hidden");
+    } else {
+        // Sinon afficher seulement le lien login
+        loginLink.classList.remove("hidden");
+        userEmailSpan.classList.add("hidden");
+        logoutBtn.classList.add("hidden");
+    }
+
+    // Gérer le clic sur logout
+    logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("userSession");
+        alert("You have been logged out 👋");
+        window.location.href = "index.html";
+    });
+});
+
+</script>
+
 </body>
 </html>
