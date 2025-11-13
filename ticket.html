@@ -630,7 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ticketBarcode.addEventListener('click', function() {
             const bookingId = currentBooking.bookingId;
             navigator.clipboard.writeText(bookingId).then(() => {
-                alert('✓ Booking ID copied to clipboard!');
+                alert('✓ Booking ID copied to clipboard!') ;
             });
         });
     }
