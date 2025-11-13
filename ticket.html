@@ -1,40 +1,640 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Space Ticket - SpaceVoyager</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @media print {
-      .no-print { display: none; }
-      body { background: white; color: black; }
-    }
-  </style>
-</head>
-<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-6">
-  <div id="ticketContainer" class="bg-gray-800 rounded-xl shadow-lg p-8 w-full max-w-lg text-center">
-    <h1 class="text-3xl font-bold mb-4">🎫 Space Travel Ticket</h1>
-    <div id="ticketDetails" class="text-gray-200 text-left mb-6">
-      <!-- Filled by JS -->
-    </div>
-    <button onclick="window.print()" class="no-print bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">🖨️ Print Ticket</button>
-    <a href="my-bookings.html" class="no-print inline-block mt-4 text-gray-400 hover:text-gray-200">← Back to My Bookings</a>
-  </div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Space Ticket - SpaceVoyager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Arrière-plan spatial avec étoiles */
+        body {
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
 
-  <script>
-    const ticket = JSON.parse(sessionStorage.getItem("ticketData"));
-    if (ticket) {
-      document.getElementById("ticketDetails").innerHTML = `
-        <p><strong>Destination:</strong> ${ticket.destinationName}</p>
-        <p><strong>Date:</strong> ${ticket.date}</p>
-        <p><strong>Travelers:</strong> ${ticket.travelers}</p>
-        <p><strong>Total Paid:</strong> $${ticket.totalPrice.toLocaleString()}</p>
-        <p><strong>Booking ID:</strong> ${ticket.id}</p>
-      `;
-    } else {
-      document.getElementById("ticketDetails").innerHTML = "<p>No ticket data found.</p>";
+        /* Animation des étoiles */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+        .star:nth-child(2) { top: 20%; left: 80%; animation-delay: 0.5s; }
+        .star:nth-child(3) { top: 30%; left: 40%; animation-delay: 1s; }
+        .star:nth-child(4) { top: 40%; left: 60%; animation-delay: 1.5s; }
+        .star:nth-child(5) { top: 50%; left: 10%; animation-delay: 2s; }
+        .star:nth-child(6) { top: 60%; left: 90%; animation-delay: 2.5s; }
+        .star:nth-child(7) { top: 70%; left: 30%; animation-delay: 0.8s; }
+        .star:nth-child(8) { top: 80%; left: 70%; animation-delay: 1.3s; }
+        .star:nth-child(9) { top: 15%; left: 50%; animation-delay: 1.8s; }
+        .star:nth-child(10) { top: 85%; left: 15%; animation-delay: 0.3s; }
+        .star:nth-child(11) { top: 25%; left: 75%; animation-delay: 2.2s; }
+        .star:nth-child(12) { top: 45%; left: 25%; animation-delay: 0.7s; }
+        .star:nth-child(13) { top: 65%; left: 85%; animation-delay: 1.2s; }
+        .star:nth-child(14) { top: 5%; left: 45%; animation-delay: 1.7s; }
+        .star:nth-child(15) { top: 75%; left: 55%; animation-delay: 0.2s; }
+        .star:nth-child(16) { top: 35%; left: 65%; animation-delay: 2.7s; }
+        .star:nth-child(17) { top: 55%; left: 35%; animation-delay: 1.4s; }
+        .star:nth-child(18) { top: 90%; left: 50%; animation-delay: 0.9s; }
+        .star:nth-child(19) { top: 12%; left: 88%; animation-delay: 2.4s; }
+        .star:nth-child(20) { top: 48%; left: 12%; animation-delay: 0.4s; }
+
+        .ticket {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 1rem;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ticket::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00d4ff 0%, #9333ea 50%, #00d4ff 100%);
+        }
+
+        .ticket-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+            padding-bottom: 2rem;
+        }
+
+        .ticket-title {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d4ff 0%, #9333ea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .ticket-subtitle {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+
+        .ticket-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .ticket-section {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .ticket-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .ticket-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            word-break: break-all;
+        }
+
+        .ticket-value.highlight {
+            color: #06b6d4;
+        }
+
+        .ticket-value.large {
+            font-size: 2rem;
+            color: #00ffff;
+        }
+
+        .ticket-passengers {
+            grid-column: 1 / -1;
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+            padding-top: 2rem;
+            margin-top: 1rem;
+        }
+
+        .passenger-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .passenger-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .passenger-name {
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 0.25rem;
+        }
+
+        .passenger-label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .ticket-price-breakdown {
+            grid-column: 1 / -1;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        .price-row.total {
+            border-bottom: none;
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+            padding-top: 1rem;
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00ffff;
+        }
+
+        .ticket-footer {
+            text-align: center;
+            border-top: 2px solid rgba(0, 212, 255, 0.3);
+            padding-top: 2rem;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .ticket-barcode {
+            text-align: center;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.2em;
+            color: #00ffff;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #00d4ff 0%, #9333ea 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(100, 116, 139, 0.2);
+            color: #e2e8f0;
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(100, 116, 139, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            color: #fca5a5;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #86efac;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        nav {
+            display: none;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .stars {
+                display: none;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .ticket {
+                max-width: 100%;
+                page-break-after: always;
+            }
+
+            @page {
+                size: A4;
+                margin: 0.5cm;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ticket {
+                padding: 1rem;
+            }
+
+            .ticket-title {
+                font-size: 2rem;
+            }
+
+            .ticket-body {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="text-white">
+    <!-- Étoiles animées -->
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-10 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                    </svg>
+                </div>
+                <span class="text-xl font-bold">SpaceVoyager</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="relative z-10 px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <!-- Contrôles -->
+            <div class="controls no-print">
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Print Ticket</button>
+                <button class="btn btn-secondary" onclick="downloadPDF()">📥 Download PDF</button>
+                <button class="btn btn-secondary" onclick="shareTicket()">📧 Share via Email</button>
+                <button class="btn btn-secondary" onclick="goBackToBookings()">← Back to Bookings</button>
+            </div>
+
+            <!-- Message d'erreur -->
+            <div id="errorMessage" class="error-message hidden"></div>
+
+            <!-- Ticket -->
+            <div id="ticketContainer"></div>
+        </div>
+    </main>
+
+    <script>
+// ==================== DATA ====================
+
+const destinationsData = {
+  "moon": { name: "The Moon", basePrice: 250000 },
+  "mars": { name: "Mars", basePrice: 500000 },
+  "iss": { name: "Orbital Station", basePrice: 150000 },
+  "europa": { name: "Europa", basePrice: 750000 },
+  "titan": { name: "Titan", basePrice: 1000000 }
+};
+
+const accommodationsData = {
+  "standard": { name: "Standard Cabin", pricePerPassenger: 0 },
+  "luxury": { name: "Luxury Suite", pricePerPassenger: 100000 },
+  "zero-g": { name: "Zero-G Pod", pricePerPassenger: 150000 }
+};
+
+let currentBooking = null;
+
+// ==================== INITIALIZATION ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeTicket();
+});
+
+function initializeTicket() {
+    // Get booking ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const bookingId = urlParams.get('id');
+
+    if (!bookingId) {
+        showError('No booking ID provided. Please access this page from your bookings list.');
+        return;
     }
-  </script>
+
+    // Retrieve booking from localStorage
+    const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+    currentBooking = bookings.find(b => b.bookingId === bookingId);
+
+    if (!currentBooking) {
+        showError('Booking not found. Please check your booking ID and try again.');
+        return;
+    }
+
+    renderTicket();
+}
+
+function renderTicket() {
+    if (!currentBooking) return;
+
+    const destination = destinationsData[currentBooking.destination];
+    const accommodation = accommodationsData[currentBooking.accommodation];
+    const departureDate = new Date(currentBooking.departureDate);
+    const createdDate = new Date(currentBooking.createdAt);
+    const totalPrice = calculateBookingPrice(currentBooking);
+
+    let passengersHTML = '<div class="passenger-list">';
+    
+    // Main passenger
+    passengersHTML += `
+        <div class="passenger-card">
+            <div class="passenger-label">Main Passenger</div>
+            <div class="passenger-name">${currentBooking.firstName} ${currentBooking.lastName}</div>
+            <div class="text-xs text-gray-400">${currentBooking.email}</div>
+        </div>
+    `;
+
+    // Additional passengers
+    if (currentBooking.additionalPassengers && currentBooking.additionalPassengers.length > 0) {
+        currentBooking.additionalPassengers.forEach((passenger, index) => {
+            passengersHTML += `
+                <div class="passenger-card">
+                    <div class="passenger-label">Passenger ${index + 2}</div>
+                    <div class="passenger-name">${passenger.firstName} ${passenger.lastName}</div>
+                    <div class="text-xs text-gray-400">${passenger.email}</div>
+                </div>
+            `;
+        });
+    }
+
+    passengersHTML += '</div>';
+
+    // Price breakdown
+    let priceBreakdownHTML = `
+        <div class="price-row">
+            <span>Base Price:</span>
+            <span>$${destination.basePrice.toLocaleString()}</span>
+        </div>
+        <div class="price-row">
+            <span>Accommodation (${accommodation.name} × ${currentBooking.passengers}):</span>
+            <span>$${(accommodation.pricePerPassenger * currentBooking.passengers).toLocaleString()}</span>
+        </div>
+    `;
+
+    if (Object.values(currentBooking.extras || {}).length > 0) {
+        Object.values(currentBooking.extras).forEach(extra => {
+            priceBreakdownHTML += `
+                <div class="price-row">
+                    <span>${extra.name}:</span>
+                    <span>+$${extra.price.toLocaleString()}</span>
+                </div>
+            `;
+        });
+    }
+
+    priceBreakdownHTML += `
+        <div class="price-row total">
+            <span>Total Amount:</span>
+            <span>$${totalPrice.toLocaleString()}</span>
+        </div>
+    `;
+
+    const ticketHTML = `
+        <div class="ticket">
+            <!-- Header -->
+            <div class="ticket-header">
+                <div class="ticket-title">SPACE VOYAGER</div>
+                <div class="ticket-subtitle">Official Space Travel Ticket</div>
+            </div>
+
+            <!-- Body -->
+            <div class="ticket-body">
+                <!-- Booking ID -->
+                <div class="ticket-section">
+                    <div class="ticket-section-title">Booking ID</div>
+                    <div class="ticket-value">${currentBooking.bookingId}</div>
+                </div>
+
+                <!-- Issue Date -->
+                <div class="ticket-section">
+                    <div class="ticket-section-title">Issue Date</div>
+                    <div class="ticket-value">${createdDate.toLocaleDateString()}</div>
+                </div>
+
+                <!-- Destination -->
+                <div class="ticket-section">
+                    <div class="ticket-section-title">Destination</div>
+                    <div class="ticket-value highlight">${destination.name}</div>
+                </div>
+
+                <!-- Departure Date -->
+                <div class="ticket-section">
+                    <div class="ticket-section-title">Departure Date</div>
+                    <div class="ticket-value">${departureDate.toLocaleDateString()}</div>
+                </div>
+
+                <!-- Accommodation -->
+                <div class="ticket-section">
+                    <div class="ticket-section-title">Accommodation</div>
+                    <div class="ticket-value">${accommodation.name}</div>
+                </div>
+
+                <!-- Total Passengers -->
+                <div class="ticket-section">
+                    <div class="ticket-section-title">Total Passengers</div>
+                    <div class="ticket-value large">${currentBooking.passengers}</div>
+                </div>
+
+                <!-- Passengers Section -->
+                <div class="ticket-passengers">
+                    <div class="ticket-section-title mb-3">Passengers</div>
+                    ${passengersHTML}
+                </div>
+
+                <!-- Price Breakdown -->
+                <div class="ticket-price-breakdown">
+                    <div class="ticket-section-title mb-3">Price Breakdown</div>
+                    ${priceBreakdownHTML}
+                </div>
+            </div>
+
+            <!-- Barcode -->
+            <div class="ticket-barcode">
+                ║ ${currentBooking.bookingId} ║
+            </div>
+
+            <!-- Footer -->
+            <div class="ticket-footer">
+                <p>✓ This ticket is valid for the specified date and passenger(s)</p>
+                <p>✓ Please bring this confirmation to your departure location</p>
+                <p>✓ Keep this ticket safe for your records</p>
+                <p style="margin-top: 1rem; opacity: 0.7;">Issued: ${createdDate.toLocaleString()}</p>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('ticketContainer').innerHTML = ticketHTML;
+    
+    // Update page title
+    document.title = `Ticket ${currentBooking.bookingId} - SpaceVoyager`;
+}
+
+// ==================== UTILITIES ====================
+
+function calculateBookingPrice(booking) {
+    const destination = destinationsData[booking.destination];
+    const accommodation = accommodationsData[booking.accommodation];
+
+    if (!destination) return 0;
+
+    let total = destination.basePrice;
+    total += accommodation.pricePerPassenger * booking.passengers;
+
+    Object.values(booking.extras || {}).forEach(extra => {
+        total += extra.price;
+    });
+
+    return total;
+}
+
+function showError(message) {
+    const errorElement = document.getElementById('errorMessage');
+    errorElement.textContent = message;
+    errorElement.classList.remove('hidden');
+}
+
+function goBackToBookings() {
+    window.location.href = 'my-bookings.html';
+}
+
+function downloadPDF() {
+    alert('PDF download feature requires a backend service. For now, please use the Print feature and save as PDF.');
+}
+
+function shareTicket() {
+    const subject = `SpaceVoyager Ticket: ${currentBooking.bookingId}`;
+    const body = `Check out my space travel booking!\n\nDestination: ${destinationsData[currentBooking.destination].name}\nDate: ${new Date(currentBooking.departureDate).toLocaleDateString()}\nBooking ID: ${currentBooking.bookingId}`;
+    
+    const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailtoLink;
+}
+
+// Copy booking ID to clipboard
+document.addEventListener('DOMContentLoaded', function() {
+    const ticketBarcode = document.querySelector('.ticket-barcode');
+    if (ticketBarcode) {
+        ticketBarcode.style.cursor = 'pointer';
+        ticketBarcode.title = 'Click to copy booking ID';
+        ticketBarcode.addEventListener('click', function() {
+            const bookingId = currentBooking.bookingId;
+            navigator.clipboard.writeText(bookingId).then(() => {
+                alert('✓ Booking ID copied to clipboard!');
+            });
+        });
+    }
+});
+    </script>
 </body>
 </html>

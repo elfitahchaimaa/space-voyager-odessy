@@ -38,7 +38,6 @@
             50% { opacity: 1; }
         }
 
-        /* Générer des étoiles aléatoires */
         .star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
         .star:nth-child(2) { top: 20%; left: 80%; animation-delay: 0.5s; }
         .star:nth-child(3) { top: 30%; left: 40%; animation-delay: 1s; }
@@ -60,13 +59,13 @@
         .star:nth-child(19) { top: 12%; left: 88%; animation-delay: 2.4s; }
         .star:nth-child(20) { top: 48%; left: 12%; animation-delay: 0.4s; }
 
-        /* Style pour les cartes d'accommodation */
+        /* Styles personnalisés */
         .accommodation-card {
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .accommodation-card:hover {
+        .accommodation-card:hover:not(.disabled) {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
         }
@@ -81,7 +80,26 @@
             cursor: not-allowed;
         }
 
-        /* Gradient pour le bouton */
+        .package-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .package-card:hover:not(.disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .package-card.selected {
+            border-color: #00ffff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .package-card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
         .gradient-button {
             background: linear-gradient(90deg, #00d4ff 0%, #9333ea 100%);
             transition: all 0.3s ease;
@@ -92,7 +110,12 @@
             box-shadow: 0 10px 40px rgba(147, 51, 234, 0.4);
         }
 
-        /* Style pour les inputs */
+        .gradient-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
         input, select, textarea {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(100, 116, 139, 0.3);
@@ -106,9 +129,89 @@
             box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
 
-        /* Radio buttons personnalisés */
         input[type="radio"]:checked + label {
             color: #00ffff;
+        }
+
+        .price-badge {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 1rem;
+            border-radius: 0.75rem;
+        }
+
+        .extras-checkbox {
+            cursor: pointer;
+        }
+
+        .error-message {
+            display: none;
+            color: #f87171;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        input.error, select.error, textarea.error {
+            border-color: #f87171;
+            background: rgba(248, 113, 113, 0.05);
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            color: #86efac;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #00d4ff;
+        }
+
+        .price-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        .price-summary-item.total {
+            border-bottom: none;
+            border-top: 2px solid rgba(100, 116, 139, 0.3);
+            font-weight: bold;
+            font-size: 1.25rem;
+            color: #00ffff;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .hidden-field {
+            display: none !important;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white;
+            }
+            .stars {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -138,7 +241,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="relative z-10 px-6 py-4">
+    <nav class="relative z-10 px-6 py-4 no-print">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-full flex items-center justify-center">
@@ -149,26 +252,24 @@
                 <span class="text-xl font-bold">SpaceVoyager</span>
             </div>
             <div id="navLinks" class="hidden md:flex items-center gap-8">
-    <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
-    <a href="destination.html" class="hover:text-cyan-400 transition">Destinations</a>
-    <a href="booking.html" class="hover:text-cyan-400 transition">Booking</a>
-    <a href="index.html#about" class="hover:text-cyan-400 transition">About</a>
-    <!-- Élément affiché selon la session -->
-    <a id="loginLink" href="login.html" class="text-cyan-400">Login</a>
-    <span id="userEmail" class="text-cyan-300 hidden"></span>
-    <button id="logoutBtn" class="hidden bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-lg text-white transition">
-        Logout
-    </button>
-</div>
-
+                <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+                <a href="destination.html" class="hover:text-cyan-400 transition">Destinations</a>
+                <a href="booking.html" class="text-cyan-400 transition">Booking</a>
+                <a href="index.html#about" class="hover:text-cyan-400 transition">About</a>
+                <a id="loginLink" href="login.html" class="text-cyan-400">Login</a>
+                <span id="userEmail" class="text-cyan-300 hidden"></span>
+                <button id="logoutBtn" class="hidden bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-lg text-white transition">
+                    Logout
+                </button>
+            </div>
         </div>
     </nav>
 
     <!-- Contenu principal -->
     <main class="relative z-10 px-6 py-12">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-6xl mx-auto">
             <!-- En-tête -->
-            <div class="text-center mb-12">
+            <div class="text-center mb-12 no-print">
                 <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-wider">
                     Book Your Space Journey
                 </h1>
@@ -178,180 +279,339 @@
                 </p>
             </div>
 
-            <!-- Formulaire -->
-            <form id="bookingForm" class="space-y-8">
-                
-                <!-- Journey Details -->
-                <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
-                    <h2 class="text-2xl font-bold mb-6 tracking-wide">Journey Details</h2>
-                    
-                    <!-- Destination -->
-                    <div class="mb-6">
-                        <label for="destination" class="block text-sm font-medium mb-2">Destination</label>
-                        <select id="destination" name="destination" class="w-full px-4 py-3 rounded-lg text-white">
-                            <option value="">Select your destination</option>
-                            <option value="moon">The Moon</option>
-                            <option value="mars">Mars</option>
-                            <option value="iss">Orbital Station</option>
-                            <option value="jupiter">Europa</option>
-                            <option value="saturn">Titan</option>
-                        </select>
-                        <span class="error-message text-red-400 text-sm mt-1 block" id="destinationError"></span>
-                    </div>
-
-                    <!-- Departure Date -->
-                    <div class="mb-6">
-                        <label for="departureDate" class="block text-sm font-medium mb-2">Departure Date</label>
-                        <input type="date" id="departureDate" name="departureDate" class="w-full px-4 py-3 rounded-lg text-white">
-                        <span class="error-message text-red-400 text-sm mt-1 block" id="departureDateError"></span>
-                    </div>
-
-                    <!-- Number of Passengers -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-medium mb-3">Number of Passengers</label>
-                        <div class="flex gap-6">
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="passengers" value="solo" class="mr-2" checked>
-                                <span>Solo Traveler</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="passengers" value="couple" class="mr-2">
-                                <span>Couple (2)</span>
-                            </label>
-                            <label class="flex items-center cursor-pointer">
-                                <input type="radio" name="passengers" value="group" class="mr-2">
-                                <span>Group (3-6)</span>
-                            </label>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Formulaire principal -->
+                <div class="lg:col-span-2">
+                    <form id="bookingForm" class="space-y-8">
+                        <!-- Message de succès -->
+                        <div id="successMessage" class="success-message">
+                            ✓ Booking saved successfully!
                         </div>
-                    </div>
 
-                    <!-- Accommodation Type -->
-                    <div>
-                        <label class="block text-sm font-medium mb-3">Accommodation Type</label>
-                        <input type="hidden" id="accommodation" name="accommodation" value="standard">
-                        <div class="grid md:grid-cols-3 gap-4">
-                            <!-- Standard Cabin -->
-                            <div class="accommodation-card border-2 border-slate-700 rounded-xl p-4 selected" data-type="standard">
-                                <h3 class="text-lg font-bold text-cyan-400 mb-2">Standard Cabin</h3>
-                                <p class="text-sm text-gray-400">Comfortable private quarters with basic amenities</p>
+                        <!-- Journey Details -->
+                        <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                            <h2 class="text-2xl font-bold mb-6 tracking-wide">Journey Details</h2>
+                            
+                            <!-- Destination -->
+                            <div class="mb-6">
+                                <label for="destination" class="block text-sm font-medium mb-2">Destination <span class="text-red-400">*</span></label>
+                                <select id="destination" name="destination" class="w-full px-4 py-3 rounded-lg text-white">
+                                    <option value="">Select your destination</option>
+                                    <option value="moon">The Moon - $250,000</option>
+                                    <option value="mars">Mars - $500,000</option>
+                                    <option value="iss">Orbital Station - $150,000</option>
+                                    <option value="europa">Europa - $750,000</option>
+                                    <option value="titan">Titan - $1,000,000</option>
+                                </select>
+                                <span class="error-message" id="destinationError"></span>
                             </div>
-                            <!-- Luxury Suite -->
-                            <div class="accommodation-card border-2 border-slate-700 rounded-xl p-4" data-type="luxury">
-                                <h3 class="text-lg font-bold text-cyan-400 mb-2">Luxury Suite</h3>
-                                <p class="text-sm text-gray-400">Spacious suite with premium amenities and viewports</p>
+
+                            <!-- Package -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-3">Package <span class="text-red-400">*</span></label>
+                                <div id="packagesContainer" class="grid md:grid-cols-2 gap-4">
+                                    <p class="text-gray-400 col-span-2">Select a destination first</p>
+                                </div>
+                                <span class="error-message" id="packageError"></span>
                             </div>
-                            <!-- Zero-G Pod -->
-                            <div class="accommodation-card border-2 border-slate-700 rounded-xl p-4" data-type="zero-g">
-                                <h3 class="text-lg font-bold text-cyan-400 mb-2">Zero-G Pod</h3>
-                                <p class="text-sm text-gray-400">Advanced accommodation with zero-gravity experience</p>
+
+                            <!-- Departure Date -->
+                            <div class="mb-6">
+                                <label for="departureDate" class="block text-sm font-medium mb-2">Departure Date <span class="text-red-400">*</span></label>
+                                <input type="date" id="departureDate" name="departureDate" class="w-full px-4 py-3 rounded-lg text-white">
+                                <span class="error-message" id="departureDateError"></span>
+                                <small class="text-gray-400 mt-1 block">Must be within 30 days from today</small>
+                            </div>
+
+                            <!-- Number of Passengers -->
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium mb-3">Number of Passengers <span class="text-red-400">*</span></label>
+                                <div class="flex gap-6 flex-wrap">
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="passengers" value="1" class="mr-2" checked>
+                                        <span>Solo Traveler</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="passengers" value="2" class="mr-2">
+                                        <span>Couple (2)</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer">
+                                        <input type="radio" name="passengers" value="3" class="mr-2">
+                                        <span>Group (3-6)</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Accommodation Type -->
+                            <div>
+                                <label class="block text-sm font-medium mb-3">Accommodation Type <span class="text-red-400">*</span></label>
+                                <input type="hidden" id="accommodation" name="accommodation" value="standard">
+                                <div id="accommodationsContainer" class="grid md:grid-cols-3 gap-4">
+                                    <p class="text-gray-400 col-span-3">Select a destination first</p>
+                                </div>
+                                <span class="error-message" id="accommodationError"></span>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- Personal Information -->
+                        <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                            <h2 class="text-2xl font-bold mb-6 tracking-wide">Personal Information</h2>
+                            
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="firstName" class="block text-sm font-medium mb-2">First Name <span class="text-red-400">*</span></label>
+                                    <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" class="w-full px-4 py-3 rounded-lg text-white">
+                                    <span class="error-message" id="firstNameError"></span>
+                                </div>
+                                <div>
+                                    <label for="lastName" class="block text-sm font-medium mb-2">Last Name <span class="text-red-400">*</span></label>
+                                    <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" class="w-full px-4 py-3 rounded-lg text-white">
+                                    <span class="error-message" id="lastNameError"></span>
+                                </div>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="email" class="block text-sm font-medium mb-2">Email Address <span class="text-red-400">*</span></label>
+                                    <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full px-4 py-3 rounded-lg text-white">
+                                    <span class="error-message" id="emailError"></span>
+                                </div>
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium mb-2">Phone Number <span class="text-red-400">*</span></label>
+                                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" class="w-full px-4 py-3 rounded-lg text-white">
+                                    <span class="error-message" id="phoneError"></span>
+                                </div>
+                            </div>
+
+                            <!-- Special Requirements -->
+                            <div>
+                                <label for="requirements" class="block text-sm font-medium mb-2">Special Requirements</label>
+                                <textarea id="requirements" name="requirements" rows="4" placeholder="Any special requirements or notes..." class="w-full px-4 py-3 rounded-lg text-white resize-none"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Extras Section -->
+                        <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                            <h2 class="text-2xl font-bold mb-6 tracking-wide">Optional Extras</h2>
+                            <div id="extrasContainer" class="space-y-3">
+                                <!-- Extras will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Additional Passengers -->
+                        <div id="additionalPassengersContainer" class="space-y-6">
+                            <!-- Dynamic passenger forms will be added here -->
+                        </div>
+
+                        <!-- Bouton Add Passenger -->
+                        <button type="button" id="addPassengerBtn" class="w-full py-4 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold transition hidden">
+                            + Add Another Passenger
+                        </button>
+
+                        <!-- Bouton Submit -->
+                        <button type="submit" class="w-full py-4 gradient-button rounded-xl text-white font-bold text-lg tracking-wider no-print">
+                            Confirm Booking
+                        </button>
+
+                        <!-- Terms -->
+                        <p class="text-center text-sm text-gray-400 no-print">
+                            By confirming, you agree to our 
+                            <a href="#" class="text-cyan-400 hover:underline">Terms of Service</a> 
+                            and 
+                            <a href="#" class="text-cyan-400 hover:underline">Space Travel Agreement</a>.
+                        </p>
+                    </form>
                 </div>
 
-                <!-- Personal Information -->
-                <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
-                    <h2 class="text-2xl font-bold mb-6 tracking-wide">Personal Information</h2>
-                    
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <!-- First Name -->
-                        <div>
-                            <label for="firstName" class="block text-sm font-medium mb-2">First Name</label>
-                            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" class="w-full px-4 py-3 rounded-lg text-white" required>
-                            <span class="error-message text-red-400 text-sm mt-1 block" id="firstNameError"></span>
+                <!-- Résumé des prix (Sidebar) -->
+                <div class="lg:col-span-1 h-fit">
+                    <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 sticky top-20">
+                        <h3 class="text-2xl font-bold mb-6 tracking-wide">Price Summary</h3>
+                        
+                        <div class="space-y-2">
+                            <div class="price-summary-item">
+                                <span>Base Price:</span>
+                                <span id="basePriceDisplay">$0</span>
+                            </div>
+                            <div class="price-summary-item">
+                                <span>Passengers:</span>
+                                <span id="passengersPriceDisplay">×1 = $0</span>
+                            </div>
+                            <div id="extrasDisplay" class="space-y-2">
+                                <!-- Extras will be shown here -->
+                            </div>
+                            <div class="price-summary-item total">
+                                <span>Total:</span>
+                                <span id="totalPrice">$0</span>
+                            </div>
                         </div>
-                        <!-- Last Name -->
-                        <div>
-                            <label for="lastName" class="block text-sm font-medium mb-2">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" class="w-full px-4 py-3 rounded-lg text-white" required>
-                            <span class="error-message text-red-400 text-sm mt-1 block" id="lastNameError"></span>
-                        </div>
-                    </div>
 
-                    <div class="grid md:grid-cols-2 gap-6 mb-6">
-                        <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium mb-2">Email Address</label>
-                            <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full px-4 py-3 rounded-lg text-white" required>
-                            <span class="error-message text-red-400 text-sm mt-1 block" id="emailError"></span>
-                        </div>
-                        <!-- Phone -->
-                        <div>
-                            <label for="phone" class="block text-sm font-medium mb-2">Phone Number</label>
-                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" class="w-full px-4 py-3 rounded-lg text-white" required>
-                            <span class="error-message text-red-400 text-sm mt-1 block" id="phoneError"></span>
-                        </div>
-                    </div>
+                        <button type="button" id="printTicketBtn" class="w-full mt-6 py-3 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-lg text-cyan-400 font-semibold transition hidden">
+                            🎫 View Ticket
+                        </button>
 
-                    <!-- Special Requirements -->
-                    <div>
-                        <label for="requirements" class="block text-sm font-medium mb-2">Special Requirements</label>
-                        <textarea id="requirements" name="requirements" rows="4" placeholder="Any special requirements or notes..." class="w-full px-4 py-3 rounded-lg text-white resize-none"></textarea>
+                        <button type="button" id="myBookingsBtn" class="w-full mt-2 py-3 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-lg text-cyan-400 font-semibold transition hidden">
+                            📋 My Bookings
+                        </button>
                     </div>
                 </div>
-
-                <!-- Bouton Add Passenger -->
-                <button type="button" id="addPassengerBtn" class="w-full py-4 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold transition">
-                    Add Passenger
-                </button>
-
-                <!-- Bouton Submit -->
-                <button type="submit" class="w-full py-4 gradient-button rounded-xl text-white font-bold text-lg tracking-wider">
-                    Confirm Booking
-                </button>
-
-                <!-- Terms -->
-                <p class="text-center text-sm text-gray-400">
-                    By confirming, you agree to our 
-                    <a href="#" class="text-cyan-400 hover:underline">Terms of Service</a> 
-                    and 
-                    <a href="#" class="text-cyan-400 hover:underline">Space Travel Agreement</a>.
-                </p>
-            </form>
+            </div>
         </div>
     </main>
 
+    <!-- Modal Ticket (cachée par défaut) -->
+    <div id="ticketModal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden no-print">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 border border-slate-700/50 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold tracking-wide">Your Space Ticket</h2>
+                <button type="button" onclick="closeTicketModal()" class="text-gray-400 hover:text-white text-2xl">✕</button>
+            </div>
+            
+            <div id="ticketContent" class="mb-6">
+                <!-- Ticket content will be generated here -->
+            </div>
+
+            <div class="flex gap-4">
+                <button type="button" onclick="window.print()" class="flex-1 py-3 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white font-semibold transition">
+                    🖨️ Print Ticket
+                </button>
+                <button type="button" onclick="closeTicketModal()" class="flex-1 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg text-white font-semibold transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-// Données des destinations
-const destinations = {
+// ==================== DATA ====================
+
+const destinationsData = {
   "moon": {
     "id": "moon",
     "name": "The Moon",
+    "basePrice": 250000,
+    "packages": [
+      { "id": "lunar_orbit", "name": "Lunar Orbit Tour", "price": 0 },
+      { "id": "lunar_landing", "name": "Moon Landing Experience", "price": 150000 },
+      { "id": "moonwalk", "name": "Moonwalk Adventure", "price": 300000 }
+    ],
     "accommodations": ["standard", "luxury", "zero-g"]
   },
   "mars": {
     "id": "mars",
     "name": "Mars",
+    "basePrice": 500000,
+    "packages": [
+      { "id": "mars_orbit", "name": "Mars Orbital Tour", "price": 0 },
+      { "id": "mars_landing", "name": "Mars Landing", "price": 200000 },
+      { "id": "mars_colony", "name": "Mars Colony Experience", "price": 400000 }
+    ],
     "accommodations": ["standard", "luxury", "zero-g"]
   },
   "iss": {
-    "id": "orbital-station",
+    "id": "iss",
     "name": "Orbital Station",
-    "accommodations": ["standard", "luxury", "zero-g"]
-  },
-  "jupiter": {
-    "id": "europa",
-    "name": "Europa",
+    "basePrice": 150000,
+    "packages": [
+      { "id": "station_tour", "name": "Station Tour", "price": 0 },
+      { "id": "station_stay", "name": "Extended Stay (3 days)", "price": 50000 },
+      { "id": "spacewalk", "name": "Spacewalk Experience", "price": 100000 }
+    ],
     "accommodations": ["standard", "luxury"]
   },
-  "saturn": {
+  "europa": {
+    "id": "europa",
+    "name": "Europa",
+    "basePrice": 750000,
+    "packages": [
+      { "id": "europa_orbit", "name": "Europa Orbital Survey", "price": 0 },
+      { "id": "ice_exploration", "name": "Ice Explorer Mission", "price": 250000 },
+      { "id": "subsurface", "name": "Subsurface Ocean Tour", "price": 500000 }
+    ],
+    "accommodations": ["standard", "luxury"]
+  },
+  "titan": {
     "id": "titan",
     "name": "Titan",
+    "basePrice": 1000000,
+    "packages": [
+      { "id": "titan_orbit", "name": "Titan Orbital Tour", "price": 0 },
+      { "id": "lake_explorer", "name": "Lake Explorer Mission", "price": 300000 },
+      { "id": "dune_safari", "name": "Methane Dune Safari", "price": 400000 }
+    ],
     "accommodations": ["standard", "luxury"]
   }
 };
 
-let passengerCount = 1;
+const accommodationsData = {
+  "standard": {
+    "id": "standard",
+    "name": "Standard Cabin",
+    "description": "Comfortable private quarters with basic amenities",
+    "pricePerPassenger": 0
+  },
+  "luxury": {
+    "id": "luxury",
+    "name": "Luxury Suite",
+    "description": "Spacious suite with premium amenities and viewports",
+    "pricePerPassenger": 100000
+  },
+  "zero-g": {
+    "id": "zero-g",
+    "name": "Zero-G Pod",
+    "description": "Advanced accommodation with zero-gravity experience",
+    "pricePerPassenger": 150000
+  }
+};
+
+const extrasData = [
+  { "id": "insurance", "name": "Travel Insurance", "price": 25000, "hiddenFor": [] },
+  { "id": "photo_pack", "name": "Professional Photo Package", "price": 15000, "hiddenFor": [] },
+  { "id": "meal_premium", "name": "Premium Meal Plan", "price": 10000, "hiddenFor": [] },
+  { "id": "suit_fitting", "name": "Spacesuit Customization", "price": 5000, "hiddenFor": ["iss"] },
+  { "id": "guide_service", "name": "Private Guide Service", "price": 50000, "hiddenFor": [] }
+];
+
+// ==================== STATE ====================
+
+let bookingState = {
+  destination: '',
+  package: '',
+  departureDate: '',
+  passengers: 1,
+  accommodation: 'standard',
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  requirements: '',
+  extras: {},
+  additionalPassengers: [],
+  bookingId: null,
+  isEditing: false
+};
+
+let currentPassengerCount = 1;
 const maxPassengers = 6;
 
-// Initialisation
+// ==================== INITIALIZATION ====================
+
 document.addEventListener('DOMContentLoaded', function() {
   initializeForm();
+  checkSessionAndEdit();
+  updateSessionUI();
+  populateExtras();
+  setDateConstraints();
 });
 
 function initializeForm() {
   const destinationSelect = document.getElementById('destination');
   destinationSelect.addEventListener('change', handleDestinationChange);
+
+  const packageRadios = document.querySelectorAll('input[name="package"]');
+  packageRadios.forEach(radio => {
+    radio.addEventListener('change', handlePackageChange);
+  });
 
   const accommodationCards = document.querySelectorAll('.accommodation-card');
   accommodationCards.forEach(card => {
@@ -366,295 +626,765 @@ function initializeForm() {
   });
 
   const addPassengerBtn = document.getElementById('addPassengerBtn');
-  addPassengerBtn.style.display = 'none';
   addPassengerBtn.addEventListener('click', addPassengerForm);
 
   const bookingForm = document.getElementById('bookingForm');
   bookingForm.addEventListener('submit', handleFormSubmit);
 
-  const departureDateInput = document.getElementById('departureDate');
-  const today = new Date().toISOString().split('T')[0];
-  departureDateInput.setAttribute('min', today);
-}
-
-function handleDestinationChange(e) {
-  const selectedDestination = e.target.value;
-  
-  if (!selectedDestination) {
-    document.querySelectorAll('.accommodation-card').forEach(card => {
-      card.style.display = 'block';
-      card.classList.remove('disabled');
-    });
-    return;
-  }
-
-  const destination = destinations[selectedDestination];
-  const accommodationCards = document.querySelectorAll('.accommodation-card');
-  
-  accommodationCards.forEach(card => {
-    const cardType = card.getAttribute('data-type');
-    
-    if (destination.accommodations.includes(cardType)) {
-      card.style.display = 'block';
-      card.classList.remove('disabled');
-    } else {
-      card.style.display = 'none';
-      card.classList.add('disabled');
-      
-      if (card.classList.contains('selected')) {
-        card.classList.remove('selected');
-        const firstAvailable = document.querySelector(`.accommodation-card[data-type="${destination.accommodations[0]}"]`);
-        if (firstAvailable) {
-          selectAccommodation(firstAvailable);
-        }
-      }
+  // Event listeners pour les extras
+  document.addEventListener('change', function(e) {
+    if (e.target.name === 'extra') {
+      handleExtrasChange();
     }
   });
 }
 
-function selectAccommodation(card) {
-  if (card.classList.contains('disabled')) return;
+function setDateConstraints() {
+  const today = new Date();
+  const minDate = today.toISOString().split('T')[0];
   
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 30);
+  const maxDateStr = maxDate.toISOString().split('T')[0];
+  
+  const departureInput = document.getElementById('departureDate');
+  departureInput.setAttribute('min', minDate);
+  departureInput.setAttribute('max', maxDateStr);
+}
+
+function populateExtras() {
+  const extrasContainer = document.getElementById('extrasContainer');
+  extrasContainer.innerHTML = '';
+
+  extrasData.forEach(extra => {
+    const label = document.createElement('label');
+    label.className = 'flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-slate-700/20 transition';
+    label.innerHTML = `
+      <input type="checkbox" name="extra" value="${extra.id}" class="checkbox-custom" />
+      <div class="flex-1">
+        <span class="font-medium">${extra.name}</span>
+        <span class="text-cyan-400 ml-2">+$${extra.price.toLocaleString()}</span>
+      </div>
+    `;
+    extrasContainer.appendChild(label);
+  });
+}
+
+// ==================== DESTINATION & PACKAGE HANDLING ====================
+
+function handleDestinationChange(e) {
+  const selectedDestination = e.target.value;
+  bookingState.destination = selectedDestination;
+  bookingState.package = '';
+  bookingState.accommodation = 'standard';
+
+  if (!selectedDestination) {
+    document.getElementById('packagesContainer').innerHTML = '<p class="text-gray-400 col-span-2">Select a destination first</p>';
+    document.getElementById('accommodationsContainer').innerHTML = '<p class="text-gray-400 col-span-3">Select a destination first</p>';
+    updatePrices();
+    return;
+  }
+
+  const destination = destinationsData[selectedDestination];
+  
+  // Update packages
+  renderPackages(destination);
+  
+  // Update accommodations
+  renderAccommodations(destination);
+  
+  // Update extra visibility
+  updateExtrasVisibility(selectedDestination);
+  
+  updatePrices();
+}
+
+function renderPackages(destination) {
+  const container = document.getElementById('packagesContainer');
+  container.innerHTML = '';
+
+  destination.packages.forEach((pkg, index) => {
+    const label = document.createElement('label');
+    label.className = 'flex items-center gap-3 cursor-pointer p-4 border-2 border-slate-700 rounded-xl hover:border-cyan-500/50 transition package-card';
+    if (index === 0) label.classList.add('selected');
+    
+    label.innerHTML = `
+      <input type="radio" name="package" value="${pkg.id}" ${index === 0 ? 'checked' : ''} class="mr-2">
+      <div class="flex-1">
+        <div class="font-medium">${pkg.name}</div>
+        ${pkg.price > 0 ? `<div class="text-cyan-400 text-sm">+$${pkg.price.toLocaleString()}</div>` : ''}
+      </div>
+    `;
+    
+    label.addEventListener('click', function() {
+      document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+    
+    container.appendChild(label);
+  });
+
+  if (destination.packages.length > 0) {
+    bookingState.package = destination.packages[0].id;
+  }
+}
+
+function handlePackageChange(e) {
+  bookingState.package = e.target.value;
+  updatePrices();
+}
+
+function renderAccommodations(destination) {
+  const container = document.getElementById('accommodationsContainer');
+  container.innerHTML = '';
+
+  destination.accommodations.forEach((accId, index) => {
+    const acc = accommodationsData[accId];
+    const card = document.createElement('div');
+    card.className = `accommodation-card border-2 border-slate-700 rounded-xl p-4 cursor-pointer ${index === 0 ? 'selected' : ''}`;
+    card.setAttribute('data-type', accId);
+    
+    card.innerHTML = `
+      <h3 class="text-lg font-bold text-cyan-400 mb-2">${acc.name}</h3>
+      <p class="text-sm text-gray-400 mb-2">${acc.description}</p>
+      ${acc.pricePerPassenger > 0 ? `<p class="text-cyan-300 text-sm">+$${acc.pricePerPassenger.toLocaleString()} per person</p>` : ''}
+    `;
+    
+    card.addEventListener('click', () => selectAccommodation(card));
+    container.appendChild(card);
+  });
+
+  if (destination.accommodations.length > 0) {
+    bookingState.accommodation = destination.accommodations[0];
+    document.getElementById('accommodation').value = destination.accommodations[0];
+  }
+}
+
+function selectAccommodation(card) {
   document.querySelectorAll('.accommodation-card').forEach(c => {
     c.classList.remove('selected');
   });
   
   card.classList.add('selected');
   const accommodationType = card.getAttribute('data-type');
+  bookingState.accommodation = accommodationType;
   document.getElementById('accommodation').value = accommodationType;
+  updatePrices();
 }
 
+function updateExtrasVisibility(destinationId) {
+  const checkboxes = document.querySelectorAll('input[name="extra"]');
+  checkboxes.forEach(checkbox => {
+    const extra = extrasData.find(e => e.id === checkbox.value);
+    if (extra && extra.hiddenFor.includes(destinationId)) {
+      checkbox.parentElement.classList.add('hidden-field');
+      checkbox.checked = false;
+    } else {
+      checkbox.parentElement.classList.remove('hidden-field');
+    }
+  });
+}
+
+// ==================== PASSENGERS HANDLING ====================
+
 function handlePassengerCountChange(e) {
-  const value = e.target.value;
-  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  const value = parseInt(e.target.value);
+  bookingState.passengers = value;
   
   removeAllPassengerForms();
   
-  if (value === 'solo') {
-    passengerCount = 1;
-    addPassengerBtn.style.display = 'none';
-  } else if (value === 'couple') {
-    passengerCount = 2;
+  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  
+  if (value === 1) {
+    addPassengerBtn.classList.add('hidden');
+  } else if (value === 2) {
     addPassengerForm();
-    addPassengerBtn.style.display = 'none';
-  } else if (value === 'group') {
-    passengerCount = 3;
+    addPassengerBtn.classList.add('hidden');
+  } else if (value === 3) {
     addPassengerForm();
     addPassengerForm();
-    addPassengerBtn.style.display = 'block';
+    addPassengerBtn.classList.remove('hidden');
   }
+  
+  updatePrices();
 }
 
 function removeAllPassengerForms() {
-  const extraForms = document.querySelectorAll('.passenger-form');
-  extraForms.forEach(form => form.remove());
-  passengerCount = 1;
+  const container = document.getElementById('additionalPassengersContainer');
+  container.innerHTML = '';
+  bookingState.additionalPassengers = [];
+  currentPassengerCount = 1;
 }
 
 function addPassengerForm() {
-  if (passengerCount >= maxPassengers) {
+  if (currentPassengerCount >= maxPassengers) {
     alert(`Maximum ${maxPassengers} passengers allowed.`);
     return;
   }
 
-  passengerCount++;
+  currentPassengerCount++;
   
-  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  const container = document.getElementById('additionalPassengersContainer');
   
   const passengerForm = document.createElement('div');
   passengerForm.className = 'passenger-form bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50';
+  passengerForm.dataset.passengerNumber = currentPassengerCount;
+  
   passengerForm.innerHTML = `
     <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold tracking-wide">Passenger ${passengerCount} Information</h2>
+      <h2 class="text-2xl font-bold tracking-wide">Passenger ${currentPassengerCount} Information</h2>
       <button type="button" class="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500 rounded-lg text-red-400 font-semibold transition flex items-center gap-2" onclick="removePassengerForm(this)">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        Remove Passenger
+        Remove
       </button>
     </div>
     <div class="grid md:grid-cols-2 gap-6 mb-6">
       <div>
-        <label for="firstName${passengerCount}" class="block text-sm font-medium mb-2">First Name</label>
-        <input type="text" id="firstName${passengerCount}" name="firstName${passengerCount}" placeholder="Enter first name" class="w-full px-4 py-3 rounded-lg text-white" required>
-        <span class="error-message text-red-400 text-sm mt-1 block" id="firstName${passengerCount}Error"></span>
+        <label for="firstName${currentPassengerCount}" class="block text-sm font-medium mb-2">First Name <span class="text-red-400">*</span></label>
+        <input type="text" id="firstName${currentPassengerCount}" name="firstName${currentPassengerCount}" placeholder="Enter first name" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message" id="firstName${currentPassengerCount}Error"></span>
       </div>
       <div>
-        <label for="lastName${passengerCount}" class="block text-sm font-medium mb-2">Last Name</label>
-        <input type="text" id="lastName${passengerCount}" name="lastName${passengerCount}" placeholder="Enter last name" class="w-full px-4 py-3 rounded-lg text-white" required>
-        <span class="error-message text-red-400 text-sm mt-1 block" id="lastName${passengerCount}Error"></span>
+        <label for="lastName${currentPassengerCount}" class="block text-sm font-medium mb-2">Last Name <span class="text-red-400">*</span></label>
+        <input type="text" id="lastName${currentPassengerCount}" name="lastName${currentPassengerCount}" placeholder="Enter last name" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message" id="lastName${currentPassengerCount}Error"></span>
       </div>
     </div>
     <div class="grid md:grid-cols-2 gap-6">
       <div>
-        <label for="email${passengerCount}" class="block text-sm font-medium mb-2">Email Address</label>
-        <input type="email" id="email${passengerCount}" name="email${passengerCount}" placeholder="Enter email" class="w-full px-4 py-3 rounded-lg text-white" required>
-        <span class="error-message text-red-400 text-sm mt-1 block" id="email${passengerCount}Error"></span>
+        <label for="email${currentPassengerCount}" class="block text-sm font-medium mb-2">Email Address <span class="text-red-400">*</span></label>
+        <input type="email" id="email${currentPassengerCount}" name="email${currentPassengerCount}" placeholder="Enter email" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message" id="email${currentPassengerCount}Error"></span>
       </div>
       <div>
-        <label for="phone${passengerCount}" class="block text-sm font-medium mb-2">Phone Number</label>
-        <input type="tel" id="phone${passengerCount}" name="phone${passengerCount}" placeholder="Enter phone number" class="w-full px-4 py-3 rounded-lg text-white" required>
-        <span class="error-message text-red-400 text-sm mt-1 block" id="phone${passengerCount}Error"></span>
+        <label for="phone${currentPassengerCount}" class="block text-sm font-medium mb-2">Phone Number <span class="text-red-400">*</span></label>
+        <input type="tel" id="phone${currentPassengerCount}" name="phone${currentPassengerCount}" placeholder="Enter phone number" class="w-full px-4 py-3 rounded-lg text-white" required>
+        <span class="error-message" id="phone${currentPassengerCount}Error"></span>
       </div>
     </div>
   `;
   
-  addPassengerBtn.parentNode.insertBefore(passengerForm, addPassengerBtn);
+  container.appendChild(passengerForm);
   
-  if (passengerCount >= maxPassengers) {
-    addPassengerBtn.style.display = 'none';
+  const addPassengerBtn = document.getElementById('addPassengerBtn');
+  if (currentPassengerCount >= maxPassengers) {
+    addPassengerBtn.classList.add('hidden');
+  } else {
+    addPassengerBtn.classList.remove('hidden');
   }
 }
 
 function removePassengerForm(button) {
   const passengerForm = button.closest('.passenger-form');
+  const passengerNumber = parseInt(passengerForm.dataset.passengerNumber);
+  
   passengerForm.remove();
-  passengerCount--;
+  currentPassengerCount--;
   
-  const groupRadio = document.querySelector('input[name="passengers"][value="group"]');
+  // Remove from state
+  bookingState.additionalPassengers = bookingState.additionalPassengers.filter(
+    (_, idx) => idx !== (passengerNumber - 2)
+  );
+  
   const addPassengerBtn = document.getElementById('addPassengerBtn');
-  
-  if (groupRadio.checked && passengerCount < maxPassengers) {
-    addPassengerBtn.style.display = 'block';
+  if (currentPassengerCount < maxPassengers) {
+    addPassengerBtn.classList.remove('hidden');
   }
   
-  renumberPassengers();
+  updatePrices();
 }
 
-function renumberPassengers() {
-  const passengerForms = document.querySelectorAll('.passenger-form');
-  passengerForms.forEach((form, index) => {
-    const passengerNumber = index + 2;
-    const title = form.querySelector('h2');
-    if (title) {
-      title.textContent = `Passenger ${passengerNumber} Information`;
+// ==================== EXTRAS HANDLING ====================
+
+function handleExtrasChange() {
+  const checkboxes = document.querySelectorAll('input[name="extra"]:checked');
+  bookingState.extras = {};
+  
+  checkboxes.forEach(checkbox => {
+    const extra = extrasData.find(e => e.id === checkbox.value);
+    if (extra) {
+      bookingState.extras[extra.id] = extra;
     }
   });
+  
+  updatePrices();
 }
+
+// ==================== PRICE CALCULATION ====================
+
+function getPriceData() {
+  const destination = destinationsData[bookingState.destination];
+  const accommodation = accommodationsData[bookingState.accommodation];
+  
+  if (!destination) {
+    return { basePrice: 0, packagePrice: 0, accommodationPrice: 0, extras: 0, total: 0 };
+  }
+
+  const packagePrice = destination.packages.find(p => p.id === bookingState.package)?.price || 0;
+  const accommodationPrice = accommodation.pricePerPassenger * bookingState.passengers;
+  
+  let extrasPrice = 0;
+  Object.values(bookingState.extras).forEach(extra => {
+    extrasPrice += extra.price;
+  });
+
+  const basePrice = destination.basePrice;
+  const total = basePrice + packagePrice + accommodationPrice + extrasPrice;
+
+  return {
+    basePrice,
+    packagePrice,
+    accommodationPrice,
+    extras: extrasPrice,
+    total
+  };
+}
+
+function updatePrices() {
+  const prices = getPriceData();
+  
+  // Update sidebar
+  document.getElementById('basePriceDisplay').textContent = `$${prices.basePrice.toLocaleString()}`;
+  document.getElementById('passengersPriceDisplay').textContent = `${bookingState.passengers} × $${(prices.accommodationPrice / bookingState.passengers || 0).toLocaleString()} = $${prices.accommodationPrice.toLocaleString()}`;
+  
+  // Update extras display
+  const extrasDisplay = document.getElementById('extrasDisplay');
+  extrasDisplay.innerHTML = '';
+  
+  Object.values(bookingState.extras).forEach(extra => {
+    const div = document.createElement('div');
+    div.className = 'price-summary-item';
+    div.innerHTML = `
+      <span>${extra.name}:</span>
+      <span>+$${extra.price.toLocaleString()}</span>
+    `;
+    extrasDisplay.appendChild(div);
+  });
+
+  if (Object.keys(bookingState.extras).length > 0) {
+    const div = document.createElement('div');
+    div.className = 'price-summary-item';
+    div.innerHTML = `
+      <span>Package Upgrade:</span>
+      <span>+$${(bookingState.destination ? getPriceData().packagePrice : 0).toLocaleString()}</span>
+    `;
+    extrasDisplay.appendChild(div);
+  }
+
+  document.getElementById('totalPrice').textContent = `$${prices.total.toLocaleString()}`;
+}
+
+// ==================== VALIDATION ====================
 
 function validateForm() {
   let isValid = true;
-  
-  document.querySelectorAll('.error-message').forEach(msg => {
-    msg.textContent = '';
-  });
-  
-  const destination = document.getElementById('destination').value;
-  if (!destination) {
-    document.getElementById('destinationError').textContent = 'Please select a destination';
+  clearAllErrors();
+
+  // Destination
+  if (!bookingState.destination) {
+    showError('destinationError', 'Please select a destination');
     isValid = false;
   }
-  
+
+  // Package
+  if (!bookingState.package) {
+    showError('packageError', 'Please select a package');
+    isValid = false;
+  }
+
+  // Departure Date
   const departureDate = document.getElementById('departureDate').value;
   if (!departureDate) {
-    document.getElementById('departureDateError').textContent = 'Please select a departure date';
+    showError('departureDateError', 'Please select a departure date');
+    isValid = false;
+  } else {
+    const selected = new Date(departureDate);
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 30);
+    
+    if (selected < today || selected > maxDate) {
+      showError('departureDateError', 'Date must be within 30 days from today');
+      isValid = false;
+    }
+  }
+
+  // Accommodation
+  if (!bookingState.accommodation) {
+    showError('accommodationError', 'Please select accommodation');
     isValid = false;
   }
-  
+
+  // Personal Information
   const firstName = document.getElementById('firstName').value.trim();
   if (!firstName) {
-    document.getElementById('firstNameError').textContent = 'First name is required';
+    showError('firstNameError', 'First name is required');
+    document.getElementById('firstName').classList.add('error');
     isValid = false;
   }
-  
+
   const lastName = document.getElementById('lastName').value.trim();
   if (!lastName) {
-    document.getElementById('lastNameError').textContent = 'Last name is required';
+    showError('lastNameError', 'Last name is required');
+    document.getElementById('lastName').classList.add('error');
     isValid = false;
   }
-  
+
   const email = document.getElementById('email').value.trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email) {
-    document.getElementById('emailError').textContent = 'Email is required';
+    showError('emailError', 'Email is required');
+    document.getElementById('email').classList.add('error');
     isValid = false;
   } else if (!emailRegex.test(email)) {
-    document.getElementById('emailError').textContent = 'Please enter a valid email';
+    showError('emailError', 'Please enter a valid email');
+    document.getElementById('email').classList.add('error');
     isValid = false;
   }
-  
+
   const phone = document.getElementById('phone').value.trim();
+  const phoneRegex = /^[\d\s\-\+\(\)]{10,}$/;
   if (!phone) {
-    document.getElementById('phoneError').textContent = 'Phone number is required';
+    showError('phoneError', 'Phone number is required');
+    document.getElementById('phone').classList.add('error');
+    isValid = false;
+  } else if (!phoneRegex.test(phone)) {
+    showError('phoneError', 'Please enter a valid phone number');
+    document.getElementById('phone').classList.add('error');
     isValid = false;
   }
-  
+
+  // Additional passengers validation
+  const passengerForms = document.querySelectorAll('.passenger-form');
+  passengerForms.forEach((form, index) => {
+    const passengerNum = index + 2;
+    
+    const pFirstName = document.getElementById(`firstName${passengerNum}`).value.trim();
+    if (!pFirstName) {
+      showError(`firstName${passengerNum}Error`, 'First name is required');
+      document.getElementById(`firstName${passengerNum}`).classList.add('error');
+      isValid = false;
+    }
+
+    const pLastName = document.getElementById(`lastName${passengerNum}`).value.trim();
+    if (!pLastName) {
+      showError(`lastName${passengerNum}Error`, 'Last name is required');
+      document.getElementById(`lastName${passengerNum}`).classList.add('error');
+      isValid = false;
+    }
+
+    const pEmail = document.getElementById(`email${passengerNum}`).value.trim();
+    if (!pEmail) {
+      showError(`email${passengerNum}Error`, 'Email is required');
+      document.getElementById(`email${passengerNum}`).classList.add('error');
+      isValid = false;
+    } else if (!emailRegex.test(pEmail)) {
+      showError(`email${passengerNum}Error`, 'Please enter a valid email');
+      document.getElementById(`email${passengerNum}`).classList.add('error');
+      isValid = false;
+    }
+
+    const pPhone = document.getElementById(`phone${passengerNum}`).value.trim();
+    if (!pPhone) {
+      showError(`phone${passengerNum}Error`, 'Phone number is required');
+      document.getElementById(`phone${passengerNum}`).classList.add('error');
+      isValid = false;
+    }
+  });
+
   return isValid;
 }
 
-function handleFormSubmit(e) {
-  e.preventDefault();
-  
-  if (validateForm()) {
-    const formData = {
-      destination: document.getElementById('destination').value,
-      departureDate: document.getElementById('departureDate').value,
-      passengers: document.querySelector('input[name="passengers"]:checked').value,
-      accommodation: document.getElementById('accommodation').value,
-      mainPassenger: {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value
-      },
-      requirements: document.getElementById('requirements').value,
-      additionalPassengers: []
-    };
-    
-    const passengerForms = document.querySelectorAll('.passenger-form');
-    passengerForms.forEach((form, index) => {
-      const passengerNum = index + 2;
-      formData.additionalPassengers.push({
-        firstName: document.getElementById(`firstName${passengerNum}`).value,
-        lastName: document.getElementById(`lastName${passengerNum}`).value,
-        email: document.getElementById(`email${passengerNum}`).value,
-        phone: document.getElementById(`phone${passengerNum}`).value
-      });
-    });
-    
-    console.log('Booking Data:', formData);
-    alert('Booking confirmed! Thank you for choosing SpaceVoyager. We will contact you shortly with more details.');
-  } else {
-    alert('Please fill in all required fields correctly.');
+function clearAllErrors() {
+  document.querySelectorAll('.error-message').forEach(msg => {
+    msg.textContent = '';
+    msg.classList.remove('show');
+  });
+  document.querySelectorAll('input, select, textarea').forEach(field => {
+    field.classList.remove('error');
+  });
+}
+
+function showError(elementId, message) {
+  const errorElement = document.getElementById(elementId);
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.classList.add('show');
   }
 }
-// -------------------- SESSION MANAGEMENT --------------------
 
-// Vérifier si un utilisateur est connecté au chargement de la page
-document.addEventListener("DOMContentLoaded", () => {
-    const userSession = JSON.parse(localStorage.getItem("userSession"));
-    const loginLink = document.getElementById("loginLink");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const userEmailSpan = document.getElementById("userEmail");
+// ==================== FORM SUBMISSION ====================
 
-    if (userSession && userSession.isLoggedIn) {
-        // Afficher l'email et le bouton logout
-        loginLink.classList.add("hidden");
-        userEmailSpan.textContent = userSession.email;
-        userEmailSpan.classList.remove("hidden");
-        logoutBtn.classList.remove("hidden");
-    } else {
-        // Sinon afficher seulement le lien login
-        loginLink.classList.remove("hidden");
-        userEmailSpan.classList.add("hidden");
-        logoutBtn.classList.add("hidden");
-    }
+function handleFormSubmit(e) {
+  e.preventDefault();
 
-    // Gérer le clic sur logout
-    logoutBtn.addEventListener("click", () => {
-        localStorage.removeItem("userSession");
-        alert("You have been logged out 👋");
-        window.location.href = "index.html";
+  if (!validateForm()) {
+    alert('Please fill in all required fields correctly.');
+    return;
+  }
+
+  // Collect main passenger data
+  bookingState.firstName = document.getElementById('firstName').value.trim();
+  bookingState.lastName = document.getElementById('lastName').value.trim();
+  bookingState.email = document.getElementById('email').value.trim();
+  bookingState.phone = document.getElementById('phone').value.trim();
+  bookingState.departureDate = document.getElementById('departureDate').value;
+  bookingState.requirements = document.getElementById('requirements').value;
+
+  // Collect additional passengers
+  bookingState.additionalPassengers = [];
+  const passengerForms = document.querySelectorAll('.passenger-form');
+  passengerForms.forEach((form, index) => {
+    const passengerNum = index + 2;
+    bookingState.additionalPassengers.push({
+      firstName: document.getElementById(`firstName${passengerNum}`).value.trim(),
+      lastName: document.getElementById(`lastName${passengerNum}`).value.trim(),
+      email: document.getElementById(`email${passengerNum}`).value.trim(),
+      phone: document.getElementById(`phone${passengerNum}`).value.trim()
     });
-});
-const editBooking = JSON.parse(sessionStorage.getItem("editBooking"));
-if (editBooking) {
-  // Pré-remplir le formulaire avec les données
-  fillForm(editBooking);
-  sessionStorage.removeItem("editBooking");
+  });
+
+  // Generate or update booking
+  if (bookingState.isEditing && bookingState.bookingId) {
+    updateBooking();
+  } else {
+    saveBooking();
+  }
 }
 
+function saveBooking() {
+  bookingState.bookingId = generateBookingId();
+  
+  const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+  const userSession = JSON.parse(localStorage.getItem('userSession'));
+  
+  bookingState.userId = userSession && userSession.isLoggedIn ? userSession.email : 'guest-' + Math.random().toString(36).substr(2, 9);
+  bookingState.createdAt = new Date().toISOString();
 
+  bookings.push({ ...bookingState });
+  localStorage.setItem('bookings', JSON.stringify(bookings));
+
+  // Show success message
+  document.getElementById('successMessage').classList.add('show');
+  setTimeout(() => {
+    document.getElementById('successMessage').classList.remove('show');
+  }, 3000);
+
+  // Display buttons
+  document.getElementById('printTicketBtn').classList.remove('hidden');
+  document.getElementById('myBookingsBtn').classList.remove('hidden');
+}
+
+function updateBooking() {
+  const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+  const index = bookings.findIndex(b => b.bookingId === bookingState.bookingId);
+  
+  if (index !== -1) {
+    bookingState.updatedAt = new Date().toISOString();
+    bookings[index] = { ...bookingState };
+    localStorage.setItem('bookings', JSON.stringify(bookings));
+    
+    alert('✓ Booking updated successfully!');
+    document.getElementById('printTicketBtn').classList.remove('hidden');
+    document.getElementById('myBookingsBtn').classList.remove('hidden');
+  }
+}
+
+function generateBookingId() {
+  return 'BK-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+}
+
+// ==================== TICKET GENERATION ====================
+
+function openTicketModal() {
+  const prices = getPriceData();
+  const destination = destinationsData[bookingState.destination];
+  const accommodation = accommodationsData[bookingState.accommodation];
+  
+  let ticketHTML = `
+    <div class="bg-gradient-to-br from-cyan-900/30 to-slate-900/30 border-2 border-cyan-400 rounded-xl p-8 mb-4">
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-cyan-400">SPACE VOYAGER</h1>
+        <p class="text-gray-300">Official Space Travel Ticket</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-cyan-400/30">
+        <div>
+          <p class="text-sm text-gray-400">Booking ID</p>
+          <p class="text-lg font-bold">${bookingState.bookingId}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Issue Date</p>
+          <p class="text-lg font-bold">${new Date(bookingState.createdAt).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Passenger Name</p>
+          <p class="text-lg font-bold">${bookingState.firstName} ${bookingState.lastName}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Email</p>
+          <p class="text-lg font-bold">${bookingState.email}</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-cyan-400/30">
+        <div>
+          <p class="text-sm text-gray-400">Destination</p>
+          <p class="text-xl font-bold text-cyan-400">${destination.name}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Departure Date</p>
+          <p class="text-lg font-bold">${new Date(bookingState.departureDate).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Accommodation</p>
+          <p class="text-lg font-bold">${accommodation.name}</p>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Total Passengers</p>
+          <p class="text-lg font-bold">${bookingState.passengers}</p>
+        </div>
+      </div>
+
+      <div class="mb-6 pb-6 border-b border-cyan-400/30">
+        <p class="text-sm text-gray-400 mb-3">Price Breakdown</p>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span>Base Price:</span>
+            <span>$${prices.basePrice.toLocaleString()}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Accommodation (${bookingState.passengers} × ${accommodation.name}):</span>
+            <span>$${prices.accommodationPrice.toLocaleString()}</span>
+          </div>
+          ${prices.packagePrice > 0 ? `
+            <div class="flex justify-between">
+              <span>Package Upgrade:</span>
+              <span>$${prices.packagePrice.toLocaleString()}</span>
+            </div>
+          ` : ''}
+          ${prices.extras > 0 ? `
+            <div class="flex justify-between">
+              <span>Extras & Add-ons:</span>
+              <span>$${prices.extras.toLocaleString()}</span>
+            </div>
+          ` : ''}
+          <div class="flex justify-between text-lg font-bold text-cyan-400 mt-2 pt-2 border-t border-cyan-400/30">
+            <span>Total Amount:</span>
+            <span>$${prices.total.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-xs text-gray-400">
+        <p>This ticket is valid for the specified date and passenger(s)</p>
+        <p>Please bring this confirmation to your departure location</p>
+        <p class="mt-2">Booking ID: ${bookingState.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('ticketContent').innerHTML = ticketHTML;
+  document.getElementById('ticketModal').classList.remove('hidden');
+}
+
+function closeTicketModal() {
+  document.getElementById('ticketModal').classList.add('hidden');
+}
+
+// ==================== SESSION MANAGEMENT ====================
+
+function checkSessionAndEdit() {
+  const editBooking = JSON.parse(sessionStorage.getItem('editBooking'));
+  if (editBooking) {
+    fillFormWithBooking(editBooking);
+    sessionStorage.removeItem('editBooking');
+  }
+}
+
+function fillFormWithBooking(booking) {
+  bookingState = { ...booking };
+  bookingState.isEditing = true;
+
+  // Fill destination and trigger change
+  document.getElementById('destination').value = booking.destination;
+  handleDestinationChange({ target: { value: booking.destination } });
+
+  // Fill other fields
+  document.getElementById('departureDate').value = booking.departureDate;
+  document.getElementById('firstName').value = booking.firstName;
+  document.getElementById('lastName').value = booking.lastName;
+  document.getElementById('email').value = booking.email;
+  document.getElementById('phone').value = booking.phone;
+  document.getElementById('requirements').value = booking.requirements;
+
+  // Set passenger count
+  document.querySelector(`input[name="passengers"][value="${booking.passengers}"]`).checked = true;
+  handlePassengerCountChange({ target: { value: booking.passengers } });
+
+  // Restore additional passengers
+  if (booking.additionalPassengers && booking.additionalPassengers.length > 0) {
+    booking.additionalPassengers.forEach((passenger, index) => {
+      const passengerNum = index + 2;
+      setTimeout(() => {
+        document.getElementById(`firstName${passengerNum}`).value = passenger.firstName;
+        document.getElementById(`lastName${passengerNum}`).value = passenger.lastName;
+        document.getElementById(`email${passengerNum}`).value = passenger.email;
+        document.getElementById(`phone${passengerNum}`).value = passenger.phone;
+      }, 100);
+    });
+  }
+
+  // Restore extras
+  Object.keys(booking.extras).forEach(extraId => {
+    const checkbox = document.querySelector(`input[name="extra"][value="${extraId}"]`);
+    if (checkbox) checkbox.checked = true;
+  });
+
+  // Update accommodation
+  setTimeout(() => {
+    const accCard = document.querySelector(`[data-type="${booking.accommodation}"]`);
+    if (accCard) selectAccommodation(accCard);
+  }, 100);
+
+  updatePrices();
+}
+
+function updateSessionUI() {
+  const userSession = JSON.parse(localStorage.getItem('userSession'));
+  const loginLink = document.getElementById('loginLink');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const userEmailSpan = document.getElementById('userEmail');
+
+  if (userSession && userSession.isLoggedIn) {
+    loginLink.classList.add('hidden');
+    userEmailSpan.textContent = userSession.email;
+    userEmailSpan.classList.remove('hidden');
+    logoutBtn.classList.remove('hidden');
+
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('userSession');
+      alert('You have been logged out 👋');
+      window.location.href = 'index.html';
+    });
+  }
+}
+
+// ==================== EVENT LISTENERS ====================
+
+document.getElementById('printTicketBtn').addEventListener('click', openTicketModal);
+document.getElementById('myBookingsBtn').addEventListener('click', () => {
+  window.location.href = 'my-bookings.html';
+});
+
+// Close modal on outside click
+document.getElementById('ticketModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeTicketModal();
+  }
+});
     </script>
 </body>
 </html>
