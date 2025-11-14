@@ -417,6 +417,16 @@
                     Confirm Booking
                 </button>
 
+                <!-- Buttons après soumission -->
+                <div id="successButtons" class="space-y-3 hidden">
+                    <button type="button" id="printTicketBtn" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 rounded-xl text-white font-bold transition">
+                        🎫 View Ticket
+                    </button>
+                    <button type="button" id="myBookingsBtn" class="w-full py-4 bg-slate-700 hover:bg-slate-600 border border-cyan-500/30 rounded-xl text-cyan-300 font-bold transition">
+                        📋 My Bookings
+                    </button>
+                </div>
+
                 <!-- Terms -->
                 <p class="text-center text-sm text-gray-400 no-print">
                     By confirming, you agree to our 
@@ -1108,6 +1118,12 @@ function saveBooking() {
 
   // Show success message
   document.getElementById('successMessage').classList.add('show');
+  
+  // Show buttons after 500ms
+  setTimeout(() => {
+    document.getElementById('successButtons').classList.remove('hidden');
+  }, 500);
+
   setTimeout(() => {
     document.getElementById('successMessage').classList.remove('show');
   }, 3000);
@@ -1309,6 +1325,12 @@ function updateSessionUI() {
 // ==================== EVENT LISTENERS ====================
 
 document.getElementById('bookingForm').addEventListener('submit', handleFormSubmit);
+
+document.getElementById('printTicketBtn').addEventListener('click', openTicketModal);
+
+document.getElementById('myBookingsBtn').addEventListener('click', () => {
+  window.location.href = 'my-bookings.html';
+});
 
 // Close modal on outside click
 document.getElementById('ticketModal').addEventListener('click', function(e) {
