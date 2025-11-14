@@ -63,16 +63,19 @@
         .accommodation-card {
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 2px solid rgba(51, 65, 85, 0.5);
         }
 
         .accommodation-card:hover:not(.disabled) {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            border-color: rgba(0, 255, 255, 0.5);
         }
 
         .accommodation-card.selected {
             border-color: #00ffff;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            background: rgba(0, 255, 255, 0.1);
         }
 
         .accommodation-card.disabled {
@@ -83,16 +86,19 @@
         .package-card {
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 2px solid rgba(51, 65, 85, 0.5);
         }
 
         .package-card:hover:not(.disabled) {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+            border-color: rgba(0, 255, 255, 0.5);
         }
 
         .package-card.selected {
             border-color: #00ffff;
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+            background: rgba(0, 255, 255, 0.1);
         }
 
         .package-card.disabled {
@@ -267,7 +273,7 @@
 
     <!-- Contenu principal -->
     <main class="relative z-10 px-6 py-12">
-        <div class="max-w-6xl mx-auto">
+        <div class="max-w-3xl mx-auto">
             <!-- En-tête -->
             <div class="text-center mb-12 no-print">
                 <h1 class="text-5xl md:text-6xl font-bold mb-4 tracking-wider">
@@ -279,183 +285,146 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Formulaire principal -->
-                <div class="lg:col-span-2">
-                    <form id="bookingForm" class="space-y-8">
-                        <!-- Message de succès -->
-                        <div id="successMessage" class="success-message">
-                            ✓ Booking saved successfully!
-                        </div>
-
-                        <!-- Journey Details -->
-                        <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
-                            <h2 class="text-2xl font-bold mb-6 tracking-wide">Journey Details</h2>
-                            
-                            <!-- Destination -->
-                            <div class="mb-6">
-                                <label for="destination" class="block text-sm font-medium mb-2">Destination <span class="text-red-400">*</span></label>
-                                <select id="destination" name="destination" class="w-full px-4 py-3 rounded-lg text-white">
-                                    <option value="">Select your destination</option>
-                                    <option value="moon">The Moon - $250,000</option>
-                                    <option value="mars">Mars - $500,000</option>
-                                    <option value="iss">Orbital Station - $150,000</option>
-                                    <option value="europa">Europa - $750,000</option>
-                                    <option value="titan">Titan - $1,000,000</option>
-                                </select>
-                                <span class="error-message" id="destinationError"></span>
-                            </div>
-
-                            <!-- Package -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium mb-3">Package <span class="text-red-400">*</span></label>
-                                <div id="packagesContainer" class="grid md:grid-cols-2 gap-4">
-                                    <p class="text-gray-400 col-span-2">Select a destination first</p>
-                                </div>
-                                <span class="error-message" id="packageError"></span>
-                            </div>
-
-                            <!-- Departure Date -->
-                            <div class="mb-6">
-                                <label for="departureDate" class="block text-sm font-medium mb-2">Departure Date <span class="text-red-400">*</span></label>
-                                <input type="date" id="departureDate" name="departureDate" class="w-full px-4 py-3 rounded-lg text-white">
-                                <span class="error-message" id="departureDateError"></span>
-                                <small class="text-gray-400 mt-1 block">Must be within 30 days from today</small>
-                            </div>
-
-                            <!-- Number of Passengers -->
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium mb-3">Number of Passengers <span class="text-red-400">*</span></label>
-                                <div class="flex gap-6 flex-wrap">
-                                    <label class="flex items-center cursor-pointer">
-                                        <input type="radio" name="passengers" value="1" class="mr-2" checked>
-                                        <span>Solo Traveler</span>
-                                    </label>
-                                    <label class="flex items-center cursor-pointer">
-                                        <input type="radio" name="passengers" value="2" class="mr-2">
-                                        <span>Couple (2)</span>
-                                    </label>
-                                    <label class="flex items-center cursor-pointer">
-                                        <input type="radio" name="passengers" value="3" class="mr-2">
-                                        <span>Group (3-6)</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <!-- Accommodation Type -->
-                            <div>
-                                <label class="block text-sm font-medium mb-3">Accommodation Type <span class="text-red-400">*</span></label>
-                                <input type="hidden" id="accommodation" name="accommodation" value="standard">
-                                <div id="accommodationsContainer" class="grid md:grid-cols-3 gap-4">
-                                    <p class="text-gray-400 col-span-3">Select a destination first</p>
-                                </div>
-                                <span class="error-message" id="accommodationError"></span>
-                            </div>
-                        </div>
-
-                        <!-- Personal Information -->
-                        <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
-                            <h2 class="text-2xl font-bold mb-6 tracking-wide">Personal Information</h2>
-                            
-                            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label for="firstName" class="block text-sm font-medium mb-2">First Name <span class="text-red-400">*</span></label>
-                                    <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" class="w-full px-4 py-3 rounded-lg text-white">
-                                    <span class="error-message" id="firstNameError"></span>
-                                </div>
-                                <div>
-                                    <label for="lastName" class="block text-sm font-medium mb-2">Last Name <span class="text-red-400">*</span></label>
-                                    <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" class="w-full px-4 py-3 rounded-lg text-white">
-                                    <span class="error-message" id="lastNameError"></span>
-                                </div>
-                            </div>
-
-                            <div class="grid md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label for="email" class="block text-sm font-medium mb-2">Email Address <span class="text-red-400">*</span></label>
-                                    <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full px-4 py-3 rounded-lg text-white">
-                                    <span class="error-message" id="emailError"></span>
-                                </div>
-                                <div>
-                                    <label for="phone" class="block text-sm font-medium mb-2">Phone Number <span class="text-red-400">*</span></label>
-                                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" class="w-full px-4 py-3 rounded-lg text-white">
-                                    <span class="error-message" id="phoneError"></span>
-                                </div>
-                            </div>
-
-                            <!-- Special Requirements -->
-                            <div>
-                                <label for="requirements" class="block text-sm font-medium mb-2">Special Requirements</label>
-                                <textarea id="requirements" name="requirements" rows="4" placeholder="Any special requirements or notes..." class="w-full px-4 py-3 rounded-lg text-white resize-none"></textarea>
-                            </div>
-                        </div>
-
-                        <!-- Extras Section -->
-                        <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
-                            <h2 class="text-2xl font-bold mb-6 tracking-wide">Optional Extras</h2>
-                            <div id="extrasContainer" class="space-y-3">
-                                <!-- Extras will be populated here -->
-                            </div>
-                        </div>
-
-                        <!-- Additional Passengers -->
-                        <div id="additionalPassengersContainer" class="space-y-6">
-                            <!-- Dynamic passenger forms will be added here -->
-                        </div>
-
-                        <!-- Bouton Add Passenger -->
-                        <button type="button" id="addPassengerBtn" class="w-full py-4 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold transition hidden">
-                            + Add Another Passenger
-                        </button>
-
-                        <!-- Bouton Submit -->
-                        <button type="submit" class="w-full py-4 gradient-button rounded-xl text-white font-bold text-lg tracking-wider no-print">
-                            Confirm Booking
-                        </button>
-
-                        <!-- Terms -->
-                        <p class="text-center text-sm text-gray-400 no-print">
-                            By confirming, you agree to our 
-                            <a href="#" class="text-cyan-400 hover:underline">Terms of Service</a> 
-                            and 
-                            <a href="#" class="text-cyan-400 hover:underline">Space Travel Agreement</a>.
-                        </p>
-                    </form>
+            <!-- Formulaire principal -->
+            <form id="bookingForm" class="space-y-8">
+                <!-- Message de succès -->
+                <div id="successMessage" class="success-message">
+                    ✓ Booking saved successfully!
                 </div>
 
-                <!-- Résumé des prix (Sidebar) -->
-                <div class="lg:col-span-1 h-fit">
-                    <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 sticky top-20">
-                        <h3 class="text-2xl font-bold mb-6 tracking-wide">Price Summary</h3>
-                        
-                        <div class="space-y-2">
-                            <div class="price-summary-item">
-                                <span>Base Price:</span>
-                                <span id="basePriceDisplay">$0</span>
-                            </div>
-                            <div class="price-summary-item">
-                                <span>Passengers:</span>
-                                <span id="passengersPriceDisplay">×1 = $0</span>
-                            </div>
-                            <div id="extrasDisplay" class="space-y-2">
-                                <!-- Extras will be shown here -->
-                            </div>
-                            <div class="price-summary-item total">
-                                <span>Total:</span>
-                                <span id="totalPrice">$0</span>
-                            </div>
+                <!-- Journey Details -->
+                <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                    <h2 class="text-2xl font-bold mb-6 tracking-wide">Journey Details</h2>
+                    
+                    <!-- Destination -->
+                    <div class="mb-6">
+                        <label for="destination" class="block text-sm font-medium mb-2">Destination <span class="text-red-400">*</span></label>
+                        <select id="destination" name="destination" class="w-full px-4 py-3 rounded-lg text-white">
+                            <option value="">Select your destination</option>
+                            <option value="moon">The Moon - $250,000</option>
+                            <option value="mars">Mars - $500,000</option>
+                            <option value="iss">Orbital Station - $150,000</option>
+                            <option value="europa">Europa - $750,000</option>
+                            <option value="titan">Titan - $1,000,000</option>
+                        </select>
+                        <span class="error-message" id="destinationError"></span>
+                    </div>
+
+                    <!-- Package -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-3">Package <span class="text-red-400">*</span></label>
+                        <div id="packagesContainer" class="grid grid-cols-1 gap-3">
+                            <p class="text-gray-400">Select a destination first</p>
                         </div>
+                        <span class="error-message" id="packageError"></span>
+                    </div>
 
-                        <button type="button" id="printTicketBtn" class="w-full mt-6 py-3 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-lg text-cyan-400 font-semibold transition hidden">
-                            🎫 View Ticket
-                        </button>
+                    <!-- Departure Date -->
+                    <div class="mb-6">
+                        <label for="departureDate" class="block text-sm font-medium mb-2">Departure Date <span class="text-red-400">*</span></label>
+                        <input type="date" id="departureDate" name="departureDate" class="w-full px-4 py-3 rounded-lg text-white">
+                        <span class="error-message" id="departureDateError"></span>
+                        <small class="text-gray-400 mt-1 block">Must be within 30 days from today</small>
+                    </div>
 
-                        <button type="button" id="myBookingsBtn" class="w-full mt-2 py-3 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-lg text-cyan-400 font-semibold transition hidden">
-                            📋 My Bookings
-                        </button>
+                    <!-- Number of Passengers -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium mb-3">Number of Passengers <span class="text-red-400">*</span></label>
+                        <div class="flex gap-6 flex-wrap">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="passengers" value="1" class="mr-2" checked>
+                                <span>Solo Traveler</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="passengers" value="2" class="mr-2">
+                                <span>Couple (2)</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="passengers" value="3" class="mr-2">
+                                <span>Group (3-6)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Accommodation Type -->
+                    <div>
+                        <label class="block text-sm font-medium mb-3">Accommodation Type <span class="text-red-400">*</span></label>
+                        <input type="hidden" id="accommodation" name="accommodation" value="standard">
+                        <div id="accommodationsContainer" class="grid grid-cols-1 gap-3">
+                            <p class="text-gray-400">Select a destination first</p>
+                        </div>
+                        <span class="error-message" id="accommodationError"></span>
                     </div>
                 </div>
-            </div>
+
+                <!-- Personal Information -->
+                <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                    <h2 class="text-2xl font-bold mb-6 tracking-wide">Personal Information</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium mb-2">First Name <span class="text-red-400">*</span></label>
+                            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" class="w-full px-4 py-3 rounded-lg text-white">
+                            <span class="error-message" id="firstNameError"></span>
+                        </div>
+                        <div>
+                            <label for="lastName" class="block text-sm font-medium mb-2">Last Name <span class="text-red-400">*</span></label>
+                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" class="w-full px-4 py-3 rounded-lg text-white">
+                            <span class="error-message" id="lastNameError"></span>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="email" class="block text-sm font-medium mb-2">Email Address <span class="text-red-400">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" class="w-full px-4 py-3 rounded-lg text-white">
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium mb-2">Phone Number <span class="text-red-400">*</span></label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" class="w-full px-4 py-3 rounded-lg text-white">
+                            <span class="error-message" id="phoneError"></span>
+                        </div>
+                    </div>
+
+                    <!-- Special Requirements -->
+                    <div>
+                        <label for="requirements" class="block text-sm font-medium mb-2">Special Requirements</label>
+                        <textarea id="requirements" name="requirements" rows="4" placeholder="Any special requirements or notes..." class="w-full px-4 py-3 rounded-lg text-white resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- Extras Section -->
+                <div class="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                    <h2 class="text-2xl font-bold mb-6 tracking-wide">Optional Extras</h2>
+                    <div id="extrasContainer" class="space-y-3">
+                        <!-- Extras will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Additional Passengers -->
+                <div id="additionalPassengersContainer" class="space-y-6">
+                    <!-- Dynamic passenger forms will be added here -->
+                </div>
+
+                <!-- Bouton Add Passenger -->
+                <button type="button" id="addPassengerBtn" class="w-full py-4 bg-slate-800 hover:bg-slate-700 border border-cyan-500/30 rounded-xl text-cyan-400 font-semibold transition hidden">
+                    + Add Passenger
+                </button>
+
+                <!-- Bouton Submit -->
+                <button type="submit" class="w-full py-4 gradient-button rounded-xl text-white font-bold text-lg tracking-wider no-print">
+                    Confirm Booking
+                </button>
+
+                <!-- Terms -->
+                <p class="text-center text-sm text-gray-400 no-print">
+                    By confirming, you agree to our 
+                    <a href="#" class="text-cyan-400 hover:underline">Terms of Service</a> 
+                    and 
+                    <a href="#" class="text-cyan-400 hover:underline">Space Travel Agreement</a>.
+                </p>
+            </form>
         </div>
     </main>
 
@@ -679,8 +648,8 @@ function handleDestinationChange(e) {
   bookingState.accommodation = 'standard';
 
   if (!selectedDestination) {
-    document.getElementById('packagesContainer').innerHTML = '<p class="text-gray-400 col-span-2">Select a destination first</p>';
-    document.getElementById('accommodationsContainer').innerHTML = '<p class="text-gray-400 col-span-3">Select a destination first</p>';
+    document.getElementById('packagesContainer').innerHTML = '<p class="text-gray-400">Select a destination first</p>';
+    document.getElementById('accommodationsContainer').innerHTML = '<p class="text-gray-400">Select a destination first</p>';
     updatePrices();
     return;
   }
@@ -944,36 +913,7 @@ function getPriceData() {
 
 function updatePrices() {
   const prices = getPriceData();
-  
-  // Update sidebar
-  document.getElementById('basePriceDisplay').textContent = `$${prices.basePrice.toLocaleString()}`;
-  document.getElementById('passengersPriceDisplay').textContent = `${bookingState.passengers} × $${(prices.accommodationPrice / bookingState.passengers || 0).toLocaleString()} = $${prices.accommodationPrice.toLocaleString()}`;
-  
-  // Update extras display
-  const extrasDisplay = document.getElementById('extrasDisplay');
-  extrasDisplay.innerHTML = '';
-  
-  Object.values(bookingState.extras).forEach(extra => {
-    const div = document.createElement('div');
-    div.className = 'price-summary-item';
-    div.innerHTML = `
-      <span>${extra.name}:</span>
-      <span>+$${extra.price.toLocaleString()}</span>
-    `;
-    extrasDisplay.appendChild(div);
-  });
-
-  if (Object.keys(bookingState.extras).length > 0) {
-    const div = document.createElement('div');
-    div.className = 'price-summary-item';
-    div.innerHTML = `
-      <span>Package Upgrade:</span>
-      <span>+$${(bookingState.destination ? getPriceData().packagePrice : 0).toLocaleString()}</span>
-    `;
-    extrasDisplay.appendChild(div);
-  }
-
-  document.getElementById('totalPrice').textContent = `$${prices.total.toLocaleString()}`;
+  // Prices are now hidden but calculated for later use
 }
 
 // ==================== VALIDATION ====================
@@ -1171,10 +1111,6 @@ function saveBooking() {
   setTimeout(() => {
     document.getElementById('successMessage').classList.remove('show');
   }, 3000);
-
-  // Display buttons
-  document.getElementById('printTicketBtn').classList.remove('hidden');
-  document.getElementById('myBookingsBtn').classList.remove('hidden');
 }
 
 function updateBooking() {
@@ -1187,8 +1123,6 @@ function updateBooking() {
     localStorage.setItem('bookings', JSON.stringify(bookings));
     
     alert('✓ Booking updated successfully!');
-    document.getElementById('printTicketBtn').classList.remove('hidden');
-    document.getElementById('myBookingsBtn').classList.remove('hidden');
   }
 }
 
@@ -1374,10 +1308,7 @@ function updateSessionUI() {
 
 // ==================== EVENT LISTENERS ====================
 
-document.getElementById('printTicketBtn').addEventListener('click', openTicketModal);
-document.getElementById('myBookingsBtn').addEventListener('click', () => {
-  window.location.href = 'my-bookings.html';
-});
+document.getElementById('bookingForm').addEventListener('submit', handleFormSubmit);
 
 // Close modal on outside click
 document.getElementById('ticketModal').addEventListener('click', function(e) {
